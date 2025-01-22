@@ -1,12 +1,17 @@
 import React from "react";
+import { ToDoContextProvider } from "./utils/TodoContext";
 import "./App.css";
 import Header from "./components/Header";
+import AddTodo from "./components/AddTodo";
 
 function App() {
 	return (
-		<div className="App">
-			<Header />
-		</div>
+		<ToDoContextProvider>
+			<div className="App">
+				<Header />
+				<AddTodo />
+			</div>
+		</ToDoContextProvider>
 	);
 }
 
