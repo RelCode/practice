@@ -45,6 +45,7 @@ This is a personal repository, but if you have suggestions or improvements, feel
 ## Contact
 If you have any questions or want to connect, you can reach me at:
 - **Message**: [Send a Message Here](https://relcode.github.io/#contact)
-- **LinkedIn**: [Your LinkedIn Profile](https://www.linkedin.com/in/yourprofile)
+- **LinkedIn**: [LinkedIn](https://www.linkedin.com/in/relebohile-nkosi-792b99106)
+
 
 Thank you for visiting my repository. Happy coding!
