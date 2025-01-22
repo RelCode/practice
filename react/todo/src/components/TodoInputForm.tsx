@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ITodo } from '../utils/ITodo';
 import { useTodos } from '../utils/TodoContext';
 
 const ToDoInputForm = () => {
@@ -8,7 +7,7 @@ const ToDoInputForm = () => {
     const [desc, setDesc] = useState("");
     const [priority, setPriority] = useState("low");
 
-    const { addTodo, editTodo, todo } = useTodos();
+    const { addTodo, editTodo, todo, cancelEdit } = useTodos();
 
     const submitForm = (e: React.FormEvent) => {
         e.preventDefault();
@@ -70,9 +69,19 @@ const ToDoInputForm = () => {
 						<option value="high">High</option>
 					</select>
 				</div>
-				<button type="submit" className="btn btn-primary mt-2" onClick={submitForm}>
-					{ id === null ? "Add Item" : "Update Item" }
-				</button>
+				<div className="d-flex flex-column justify-content-center">
+					<button type="submit" className="btn btn-primary mt-2" onClick={submitForm}>
+						{id === null ? "Add Item" : "Update Item"}
+					</button>
+					{id !== null && (
+						<button type="button" className="btn btn-danger mt-2" onClick={() => {
+                            clearFields();
+                            cancelEdit();
+                        }}>
+							Cancel
+						</button>
+					)}
+				</div>
 			</form>
 		</div>
 	);

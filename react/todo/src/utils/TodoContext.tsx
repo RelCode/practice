@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { ITodo } from './ITodo';
+import { ITodo } from './ToDo';
 
 interface ITodoContext {
     todo: ITodo;
@@ -25,11 +25,11 @@ const ToDoContextProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
     const editTodo = (id: number, title: string, desc: string, priority: string) => {
         let index = todos.findIndex((todo) => todo.id === id);
-        console.log("Index: ", index);
         todos[index].title = title;
         todos[index].desc = desc;
         todos[index].priority = priority;
         setTodos(todos);
+        setTodo(null);
     }
 
     const selectTodo = (id: number) => {
@@ -51,8 +51,12 @@ const ToDoContextProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         setTodos(newTodos);
     }
 
+    const cancelEdit = () => {
+        setTodo(null);
+    }
+
     return (
-        <ToDoContext.Provider value={{ todo, todos, addTodo, selectTodo, editTodo, toggleTodo, deleteTodo }}>
+        <ToDoContext.Provider value={{ todo, todos, addTodo, selectTodo, editTodo, toggleTodo, deleteTodo, cancelEdit }}>
             { children }
         </ToDoContext.Provider>
     )
