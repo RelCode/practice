@@ -2,8 +2,11 @@ import React, { createContext, useContext, useState } from 'react';
 import { ITodo } from './ITodo';
 
 interface ITodoContext {
+    todo: ITodo;
     todos: ITodo[];
     addTodo: (title: string, desc: string, priority: string) => void;
+    editTodo: (id: number, title: string, desc: string, priority: string) => void;
+    selectTodo: (id: number) => void;
     toggleTodo: (id: number) => void;
     deleteTodo: (id: number) => void;
 }
@@ -12,11 +15,26 @@ const ToDoContext = createContext<ITodoContext|undefined>(undefined);
 
 const ToDoContextProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     const [todos, setTodos] = useState<ITodo[]>([]);
+    const [todo, setTodo] = useState<ITodo|null>(null);
 
     const addTodo = (title: string, desc: string, priority: string, completed: boolean) => {
-        let newID = Number(new Date().getTime());
-        let newTodos = [...todos, {newID, title, desc, priority, completed}];
+        let id = Number(new Date().getTime());
+        let newTodos = [...todos, {id, title, desc, priority, completed}];
         setTodos(newTodos);
+    }
+
+    const editTodo = (id: number, title: string, desc: string, priority: string) => {
+        let index = todos.findIndex((todo) => todo.id === id);
+        console.log("Index: ", index);
+        todos[index].title = title;
+        todos[index].desc = desc;
+        todos[index].priority = priority;
+        setTodos(todos);
+    }
+
+    const selectTodo = (id: number) => {
+        let index = todos.findIndex((todo) => todo.id === id);
+        setTodo(todos[index]);
     }
 
     const toggleTodo = (id: number) => {
@@ -34,7 +52,7 @@ const ToDoContextProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     }
 
     return (
-        <ToDoContext.Provider value={{ todos, addTodo, toggleTodo, deleteTodo }}>
+        <ToDoContext.Provider value={{ todo, todos, addTodo, selectTodo, editTodo, toggleTodo, deleteTodo }}>
             { children }
         </ToDoContext.Provider>
     )
