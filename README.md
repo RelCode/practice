@@ -25,7 +25,7 @@ The main technologies and languages I will be focusing on include:
 - **Project 1**: TBD.
 
 ### React
-- **Project 1**: Basic ToDo Application: You know it had to be, with React you either start with a Calculator or a ToDo... Hopefully the second one will be very revolutionary 😊
+- **Project 1**: Basic ToDo Application: Start your React journey with a classic! This ToDo app will not only help you manage tasks but also introduce you to the core concepts of React. Let's make task management revolutionary and fun! 😊
 
 ### C#
 - **Project 1**: TBD.
