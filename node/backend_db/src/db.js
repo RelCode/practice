@@ -16,4 +16,23 @@ db.connect((err) => {
     }
 })
 
-module.exports = { db };
+const createDB = (cb) => {
+    const sql = fs.readFileSync(path.join(__dirname, './database/createDB.sql'), 'utf-8');
+    const multipleQueries = sql.split(';').filter(q => q.trim().length);
+    try {
+        multipleQueries.forEach(query => {
+            db.query(query, (err, result) => {
+                if (err){
+                    console.log("Error creating database: ", err.message);
+                    throw new Error(err);
+                }
+            });
+        });
+        cb && cb();
+    } catch (error) {
+        console.log("Error creating database: ", error.message);
+        throw new Error(error);
+    }
+}
+
+module.exports = { db, createDB };
