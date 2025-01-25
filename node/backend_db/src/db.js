@@ -60,7 +60,7 @@ const checkForDbUpdates = () => {
                                     });
                                 });
                                 try {
-                                    db.query("UPDATE installed_versions SET version_installed = ? WHERE content_section = ?", [files[0], folder], (err, result) => {
+                                    db.query("INSERT INTO installed_versions (content_section, version_installed) VALUES (?, ?) ON DUPLICATE KEY UPDATE version_installed = VALUES(version_installed)", [folder, files[0]], (err, result) => {
                                         if (err) {
                                             console.log("Error updating installed_versions table: ", err.message);
                                             throw new Error(err);
