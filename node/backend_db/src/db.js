@@ -59,6 +59,18 @@ const checkForDbUpdates = () => {
                                         }
                                     });
                                 });
+                                try {
+                                    db.query("UPDATE installed_versions SET version_installed = ? WHERE content_section = ?", [files[0], folder], (err, result) => {
+                                        if (err) {
+                                            console.log("Error updating installed_versions table: ", err.message);
+                                            throw new Error(err);
+                                        }
+                                    })
+                                } catch (error) {
+                                    console.log("Error updating installed_versions table: ", error.message);
+                                    throw new Error(error);
+                                    
+                                }
                             } catch (error) {
                                 console.log("Error reading or executing SQL file: ", error.message);
                                 throw new Error(error);
