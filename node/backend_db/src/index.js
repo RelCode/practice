@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { db, createDB } = require("./db");
+const { db, createDB, checkForDbUpdates } = require("./db");
 const articles = require("./routes/articlesRoute");
 
 require('dotenv').config();
@@ -15,6 +15,7 @@ app.use('/api/articles', articles);
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     createDB(() => {
+        checkForDbUpdates();
         //db.updateDatabase(); will run here every time the server starts
     });
 });
