@@ -17,21 +17,25 @@ This repository serves as my personal playground for upskilling in different are
 The main technologies and languages I will be focusing on include:
 - **Node.js**: Building server-side applications and APIs.
 - **React**: Developing dynamic and responsive front-end applications.
+- **React-Native**: Building cool react-native applications
 - **C#**: Exploring desktop applications, game development, and more.
 - **Python**: Creating backends, working with AI and machine learning libraries.
 
 ## Projects
 ### Node.js
-- **Project 1**: TBD.
+- **Project 1**: Backend_DB: this is a basic node application that has mysql2 integrated into. This project can be used as a node server or the database can be used for data capturing while the rest of the node application is used as an API endpoint.
 
 ### React
 - **Project 1**: Basic ToDo Application: Start your React journey with a classic! This ToDo app will not only help you manage tasks but also introduce you to the core concepts of React. Let's make task management revolutionary and fun! 😊
 
+### React-Native
+- **Project 1**: TBA
+
 ### C#
-- **Project 1**: TBD.
+- **Project 1**: TBA.
 
 ### Python (AI/Backend)
-- **Project 1**: TBD.
+- **Project 1**: TBA.
 
 ## Goals
 - **Daily Learning**: Commit to learning something new every day.
