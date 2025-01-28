@@ -3,3 +3,4 @@ app-example
 node_modules
 expo-env.d.ts
 package-lock.json
+.env

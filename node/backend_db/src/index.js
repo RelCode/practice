@@ -16,8 +16,8 @@ app.use('/api/landmarks', landmarks);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    createDB(() => {
-        checkForDbUpdates();
-        //db.updateDatabase(); will run here every time the server starts
-    });
+    // Remove the use of DB for now
+    // createDB(() => {
+    //     checkForDbUpdates();
+    // });
 });
