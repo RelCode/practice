@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
-import { ScrollView, Dimensions, View, Text, StyleSheet, Image } from "react-native";
+import { ScrollView, Dimensions, View, Text, StyleSheet, Image, ActivityIndicator } from "react-native";
 
 const { width } = Dimensions.get("window");
 
 export interface Landmark {
-    id: number;
     name: string;
-    imageUrl: string;
-    description: string;
+    base64: string;
 }
 
 const Landmarks = () => {
 	const [activeIndex, setActiveIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
     const [images, setImages] = useState<Landmark[]>([]);
 
 	const handleScroll = (event: any) => {
@@ -21,16 +20,23 @@ const Landmarks = () => {
 		}
 	};
 
-    useEffect(() => {
-        fetch("http://localhost:3001/api/landmarks")
-          .then(response => response.json())
-          .then(data => {
-            setImages(data);
-          })
-          .catch(error => console.error("Error fetching images:", error));
-      }, []);
+    const getName = (name: string) => {
+        let unscrambled = name.replace(".webp","").replace("_"," ");
+        const unscrambledArr: string[] = unscrambled.split(" ").map((word: string) => {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        });
+        return unscrambledArr.join(" ");
+    }
 
-      console.log(images);
+    useEffect(() => {
+        fetch(`${process.env.EXPO_PUBLIC_API_ENDPOINT}/landmarks`)
+			.then((response) => response.json())
+			.then((data) => {
+				setImages(data);
+				setLoading(false);
+			})
+			.catch((error) => console.error("Error fetching images:", error));
+      }, []);
 
 	return (
 		<ScrollView
@@ -41,15 +47,14 @@ const Landmarks = () => {
 			scrollEventThrottle={16}
 			style={styles.scrollView}
 		>
-			{images.map((mark: Landmark, index: number) => {
-                console.log("mark", mark.imageUrl);
+			{loading ? (<View style={styles.imageContainer}><ActivityIndicator size={"large"} /></View>) : images.map((mark: Landmark, index: number) => {
                 return (
                     <View style={styles.imageContainer} key={index}>
-                        <Text>{mark.name}</Text>
+                        <Text style={styles.imageName}>{getName(mark.name)}</Text>
                         <Image
                             width={width}
                             height={450}
-                            source={{ uri: mark.imageUrl }}
+                            source={{ uri: `data:image/webp;base64,${mark.base64}` }}
                         />
                     </View>
                 )
@@ -67,6 +72,12 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
+    imageName: {
+        fontSize: 24,
+        fontWeight: "bold",
+        padding: 10,
+        textDecorationLine: "underline",
+    }
 });
 
 export default Landmarks;

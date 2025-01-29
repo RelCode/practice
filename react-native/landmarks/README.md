@@ -29,3 +29,12 @@ Run the project on your preferred emulator or physical device to see the slidesh
 ## Backend
 
 Ensure the `backend_db` project is running to provide the necessary data for the landmarks.
+## Screenshots
+
+### Landing Page
+![Landing Page](./assets/screenshots/landing_page.png)
+The landing page contains a brief description of the app and a button that navigates to the landmarks screen.
+
+### Landmarks Screen
+![Landmarks Screen](./assets/screenshots/landmarks_screen.png)
+The landmarks screen features a horizontally scrollable element displaying pictures of landmarks along with their titles.
