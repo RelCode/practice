@@ -1,0 +1,75 @@
+# Ignore build output
+bin/
+obj/
+
+# Ignore dependencies
+**/node_modules/
+**/packages/
+
+# Ignore user-specific files
+**/.vs/
+**/.vscode/
+**/.idea/
+
+# Ignore logs
+**/*.log
+
+# Ignore NuGet packages
+*.nupkg
+
+# Ignore Visual Studio files
+*.suo
+*.user
+*.sln.docstates
+*.bak
+
+# Ignore Mac files
+.DS_Store
+
+# Ignore JetBrains Rider files
+.idea/
+
+# Ignore Resharper files
+_ReSharper.*
+
+# Ignore dotnet core files
+*.dll
+*.exe
+*.pdb
+*.userprefs
+*.vspscc
+*.vssscc
+*.sw*
+*.sln.ide
+
+# Ignore test results
+TestResults/
+
+# Ignore temporary files
+**/*.tmp
+**/*.bak
+**/*.cache
+**/*.log
+**/*.vspscc
+**/*.vssscc
+**/*.sw*
+**/*.suo
+**/*.user
+**/*.userprefs
+**/*.sln.ide
+**/*.sln.docstates
+**/*.bak
+**/*.nupkg
+**/*.dll
+**/*.exe
+**/*.pdb
+**/*.vs/
+**/*.vscode/
+**/*.idea/
+**/*.log
+**/.DS_Store
+**/.idea/
+**/_ReSharper.*
+
+appsettings.Development.json
+appsettings.json

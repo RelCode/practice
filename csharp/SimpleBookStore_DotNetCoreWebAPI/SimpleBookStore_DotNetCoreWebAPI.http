@@ -1,0 +1,6 @@
+@SimpleBookStore_DotNetCoreWebAPI_HostAddress = http://localhost:5087
+
+GET {{SimpleBookStore_DotNetCoreWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
