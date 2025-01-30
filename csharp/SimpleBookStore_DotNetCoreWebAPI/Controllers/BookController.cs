@@ -1,35 +1,36 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using SimpleBookStore_DotNetCoreWebAPI.Data;
 using SimpleBookStore_DotNetCoreWebAPI.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace SimpleBookStore_DotNetCoreWebAPI.Controllers
 {
     [ApiController]
     [Route("api/books")]
-    public class BookController
+    public class BookController : ControllerBase
     {
-        private static List<Book> books = new List<Book>
+        private readonly BookStoreContext _context;
+
+        public BookController(BookStoreContext context)
         {
-            new Book { Id = 1, Title = "The Great Gatsby", Author = "F. Scott Fitzgerald", Price = 7.43, Stock = 3 },
-            new Book { Id = 2, Title = "To Kill a Mockingbird", Author = "Harper Lee", Price = 6.99, Stock = 5 },
-            new Book { Id = 3, Title = "1984", Author = "George Orwell", Price = 6.99, Stock = 2 },
-            new Book { Id = 4, Title = "Harry Potter and the Sorcerer's Stone", Author = "J.K. Rowling", Price = 7.99, Stock = 0 },
-            new Book { Id = 5, Title = "The Catcher in the Rye", Author = "J.D. Salinger", Price = 6.99, Stock = 1 }
-        };
+            _context = context;
+        }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Book>> GetAllBooks()
+        public async Task<ActionResult<IEnumerable<Book>>> GetAllBooks()
         {
-            return books;
+            return await _context.Books.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Book> GetBookById(int id)
+        public async Task<ActionResult<Book>> GetBookById(int id)
         {
-            var book = books.FirstOrDefault(b => b.Id == id);
+            var book = await _context.Books.FindAsync(id);
             if (book == null)
             {
                 return new NotFoundResult();
@@ -38,39 +39,36 @@ namespace SimpleBookStore_DotNetCoreWebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Book> AddBook(Book newBook)
+        public async Task<ActionResult<Book>> AddBook(Book newBook)
         {
-            int newId = books.Max(b => b.Id) + 1;
-            newBook.Id = newId;
-            books.Add(newBook);
-            return new CreatedResult("api/books/" + newId, newBook);
+            _context.Books.Add(newBook);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetBookById), new {id = newBook.Id}, newBook);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateBook(int id, Book updatedBook)
+        public async Task<IActionResult> UpdateBook(int id, Book updatedBook)
         {
-            var book = books.FirstOrDefault(b => b.Id == id);
-            if (book == null)
+            if(id != updatedBook.Id)
             {
-                return new NotFoundResult();
+                return BadRequest();
             }
-            book.Title = updatedBook.Title;
-            book.Author = updatedBook.Author;
-            book.Price = updatedBook.Price;
-            book.Stock = updatedBook.Stock;
-            return new OkResult();
+            _context.Entry(updatedBook).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteBook(int id)
+        public async Task<IActionResult> DeleteBook(int id)
         {
-            var newBooks = books.Where(b => b.Id != id).ToList();
-            if (newBooks.Count == books.Count)
+            var book = await _context.Books.FindAsync(id);
+            if(book == null)
             {
                 return new NotFoundResult();
             }
-            books = newBooks;
-            return new OkResult();
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
