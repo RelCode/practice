@@ -20,6 +20,8 @@ const Ratings : React.FunctionComponent = () => {
             .then(response => response.json())
             .then(data => {
                 console.log("Data", data);
+                setRatings(data);
+                setLoading(false);
             })
             .catch(error => {
                 console.error("Error", error);
