@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimpleBookStore_DotNetCoreWebAPI.Data;
 
@@ -10,9 +11,11 @@ using SimpleBookStore_DotNetCoreWebAPI.Data;
 namespace SimpleBookStore_DotNetCoreWebAPI.Migrations
 {
     [DbContext(typeof(BookStoreContext))]
-    partial class BookStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20250131125048_UpdateRatingsTable")]
+    partial class UpdateRatingsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
@@ -74,13 +77,11 @@ namespace SimpleBookStore_DotNetCoreWebAPI.Migrations
 
             modelBuilder.Entity("SimpleBookStore_DotNetCoreWebAPI.Models.Rating", b =>
                 {
-                    b.HasOne("SimpleBookStore_DotNetCoreWebAPI.Models.Book", "Book")
+                    b.HasOne("SimpleBookStore_DotNetCoreWebAPI.Models.Book", null)
                         .WithMany("Ratings")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Book");
                 });
 
             modelBuilder.Entity("SimpleBookStore_DotNetCoreWebAPI.Models.Book", b =>

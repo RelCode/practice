@@ -14,7 +14,7 @@ const Ratings : React.FunctionComponent = () => {
 
     useEffect(() => {
         console.log("Fetching data from .NET API");
-        fetch("/api/books", {
+        fetch("/api/ratings", {
                 method: "GET"
             })
             .then(response => response.json())

@@ -7,5 +7,6 @@
         public string Author { get; set; }
         public double Price { get; set; }
         public int Stock { get; set; }
+        public ICollection<Rating>? Ratings { get; set; }
     }
 }

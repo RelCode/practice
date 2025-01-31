@@ -10,5 +10,6 @@ namespace SimpleBookStore_DotNetCoreWebAPI.Data
         }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
     }
 }
