@@ -8,6 +8,5 @@
         public int Rate { get; set; }
         public string Comment { get; set; }
         public DateTime DateRated { get; set; }
-        public Book? Book { get; set; }
     }
 }

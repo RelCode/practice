@@ -17,7 +17,9 @@ namespace SimpleBookStore_DotNetCoreWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Rating>>> GetAllRatings()
         {
-            return await _context.Ratings.Include(r => r.Book).ToListAsync();
+            return await _context.Ratings.ToListAsync();
+            //var ratings = _context.Ratings.ToListAsync();
+            //return ratings;
         }
 
         [HttpPost]

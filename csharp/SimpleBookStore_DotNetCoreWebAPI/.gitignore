@@ -70,6 +70,9 @@ TestResults/
 **/.DS_Store
 **/.idea/
 **/_ReSharper.*
+*.db-wal
+*.db-shm
+
 
 appsettings.Development.json
 appsettings.json

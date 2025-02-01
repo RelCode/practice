@@ -24,7 +24,9 @@ namespace SimpleBookStore_DotNetCoreWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetAllBooks()
         {
-            return await _context.Books.ToListAsync();
+            var books = await _context.Books.ToListAsync();
+            books.ForEach(book => book.Ratings = _context.Ratings.Where(r => r.BookId == book.Id).ToList());
+            return books;
         }
 
         [HttpGet("{id}")]
