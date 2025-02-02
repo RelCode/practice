@@ -56,4 +56,6 @@ If you have any questions or want to connect, you can reach me at:
 
 Some changes
 
+Another change
+
 Thank you for visiting my repository. Happy coding!
