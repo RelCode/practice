@@ -50,10 +50,9 @@ The SQLite database has been modified to include the following columns in the bo
 - Browse through the list of books.
 - Rate books and see the average rating.
 
-## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request.
+## Screenshot
 
-## License
+Here is a screenshot of the Book Ratings App showing books that have been rated:
 
-This project is licensed under the MIT License.
+![Book Ratings Screenshot](./public/ratings.png)
