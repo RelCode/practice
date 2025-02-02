@@ -54,6 +54,10 @@ const Ratings : React.FunctionComponent = () => {
         return <h1>Loading...</h1>
     }
 
+    if(errorMsg !== ""){
+        return <h1>{errorMsg}</h1>
+    }
+
     return (
         <div className="container">
             <div className="row">
