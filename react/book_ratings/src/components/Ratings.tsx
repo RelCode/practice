@@ -42,7 +42,6 @@ const Ratings : React.FunctionComponent = () => {
                 }
             })
             .then(data => {
-                console.log(data);
                 setRatings(data);
             })
             .catch(error => {

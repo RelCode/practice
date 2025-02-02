@@ -27,12 +27,14 @@ The main technologies and languages I will be focusing on include:
 
 ### React
 - **Project 1**: Basic ToDo Application: Start your React journey with a classic! This ToDo app will not only help you manage tasks but also introduce you to the core concepts of React. Let's make task management revolutionary and fun! 😊
+- **Project 2**: Book Ratings Viewer: This application uses a .NET Core API to fetch and display books along with their ratings. It's a step up from the first project, providing a more complex interaction between the front-end and back-end.
 
 ### React-Native
-- **Project 1**: TBA
+- **Project 1**: Landmark Viewer: A single-page React Native application that fetches data from a Node.js backend. The app makes an API call to retrieve an array of landmark images encoded in base64, displaying them in a user-friendly interface.
 
 ### C#
-- **Project 1**: TBA.
+- **Project 1**: Console Task Manager: A basic console-based application that allows users to select from a menu to enter new tasks, view old ones, or exit the program.
+- **Project 2**: Book Ratings API: A .NET Core Web API project for managing books and their ratings.
 
 ### Python (AI/Backend)
 - **Project 1**: TBA.
