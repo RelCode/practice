@@ -2,6 +2,7 @@ import express from "express";
 import { Webhooks } from "@octokit/webhooks";
 import dotenv from "dotenv";
 import axios from "axios";
+import OpenAI from "openai";
 
 dotenv.config();
 
@@ -21,11 +22,15 @@ app.post("/webhook", async (req, res) => {
         const repo = payload.repository.full_name;
         console.log(`New PR detected: #${prNumber} in ${repo}`);
 
+
         // Fetch PR changes
         const { data: files } = await axios.get(
             payload.pull_request._links.self.href + "/files",
             {
-                headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` },
+                headers: { 
+                    Authorization: `token ${process.env.GITHUB_TOKEN}`,
+                    "User-Agent": "ai-code-review-bot"
+                },
             }
         );
 
@@ -42,32 +47,43 @@ app.post("/webhook", async (req, res) => {
             codeToReview = codeToReview.substring(0, maxTokens);
         }
 
-        if (codeToReview) {
-            // Send to OpenAI for review
-            const response = await axios.post(
-                "https://api.openai.com/v1/chat/completions",
-                {
-                    model: "gpt-4-turbo",
-                    messages: [{ role: "system", content: "Analyze this code for improvements" }, { role: "user", content: codeToReview }]
+        try {
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+                    "Content-Type": "application/json"
                 },
-                {
-                    headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
-                }
-            );
-
-            const reviewComments = response.data.choices[0].message.content;
-            console.log(`AI Review:\n${reviewComments}`);
-
-            // Post comments on GitHub PR
-            await axios.post(
-                `${payload.pull_request._links.comments.href}`,
-                { body: reviewComments },
-                { headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` } }
-            );
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                        { role: "system", content: "Analyze this code for improvements" },
+                        { role: "user", content: codeToReview }
+                    ],
+                    temperature: 1,
+                    max_tokens: 2048,
+                    top_p: 1,
+                    frequency_penalty: 0,
+                    presence_penalty: 0
+                })
+            });
+        
+            if (!response.ok) {
+                throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+            }
+        
+            const data = await response.json();
+            console.log("AI Response: ", data.choices?.[0]?.message?.content || "No response from AI");
+        } catch (error) {
+            console.error("Error calling OpenAI API:", error);
         }
+        
+        
     }
 
     res.sendStatus(200);
 });
 
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`)
+});
