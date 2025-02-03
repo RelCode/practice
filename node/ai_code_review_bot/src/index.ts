@@ -37,7 +37,6 @@ app.post("/webhook", async (req, res) => {
         });
 
         // Cap the codeToReview length to 8000 tokens
-        const maxTokens = 8000;
         if (codeToReview.length > maxTokens) {
             codeToReview = codeToReview.substring(0, maxTokens);
         }
