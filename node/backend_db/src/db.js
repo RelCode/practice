@@ -79,4 +79,5 @@ const checkForDbUpdates = () => {
     }
 }
 
+
 module.exports = { db, createDB, checkForDbUpdates };
