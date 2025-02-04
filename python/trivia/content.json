@@ -1,0 +1,139 @@
+{
+    "topics": {
+        "sports": {
+            "1": {
+                "question": "Who is the most capped player in the UEFA Champions League?",
+                "options": ["Sergio Ramos", "Gigi Buffon", "Cristiano Ronaldo", "Pepe"],
+                "answer": 2
+            },
+            "2": {
+                "question": "Which country has won the most FIFA World Cups?",
+                "options": ["Germany", "Brazil", "Argentina", "Italy"],
+                "answer": 1
+            },
+            "3": {
+                "question": "Who holds the record for the most points in a single NBA game?",
+                "options": ["Michael Jordan", "Kobe Bryant", "Wilt Chamberlain", "LeBron James"],
+                "answer": 2
+            },
+            "4": {
+                "question": "Which sport is known as the 'king of sports'?",
+                "options": ["Basketball", "Tennis", "Soccer", "Cricket"],
+                "answer": 2
+            },
+            "5": {
+                "question": "Which city hosted the 2016 Summer Olympics?",
+                "options": ["London", "Rio de Janeiro", "Tokyo", "Beijing"],
+                "answer": 1
+            }
+        },
+        "history": {
+            "1": {
+                "question": "Who was the first president of the United States?",
+                "options": ["George Washington", "Abraham Lincoln", "Thomas Jefferson", "John Adams"],
+                "answer": 0
+            },
+            "2": {
+                "question": "Which war ended with the Treaty of Versailles?",
+                "options": ["World War I", "World War II", "Cold War", "Napoleonic Wars"],
+                "answer": 0
+            },
+            "3": {
+                "question": "Who discovered America?",
+                "options": ["Christopher Columbus", "Marco Polo", "Ferdinand Magellan", "Leif Erikson"],
+                "answer": 0
+            },
+            "4": {
+                "question": "What year did the Titanic sink?",
+                "options": ["1912", "1905", "1898", "1923"],
+                "answer": 0
+            },
+            "5": {
+                "question": "Which ancient civilization built the pyramids?",
+                "options": ["Romans", "Greeks", "Egyptians", "Mayans"],
+                "answer": 2
+            }
+        },
+        "science": {
+            "1": {
+                "question": "What is the chemical symbol for gold?",
+                "options": ["Go", "Gd", "Au", "Ag"],
+                "answer": 2
+            },
+            "2": {
+                "question": "Which planet is known as the Red Planet?",
+                "options": ["Venus", "Mars", "Jupiter", "Saturn"],
+                "answer": 1
+            },
+            "3": {
+                "question": "What is the hardest natural substance on Earth?",
+                "options": ["Iron", "Diamond", "Platinum", "Quartz"],
+                "answer": 1
+            },
+            "4": {
+                "question": "How many bones are in the adult human body?",
+                "options": ["206", "215", "198", "222"],
+                "answer": 0
+            },
+            "5": {
+                "question": "Who developed the theory of relativity?",
+                "options": ["Isaac Newton", "Albert Einstein", "Nikola Tesla", "Stephen Hawking"],
+                "answer": 1
+            }
+        },
+        "geography": {
+            "1": {
+                "question": "What is the capital of Canada?",
+                "options": ["Toronto", "Vancouver", "Montreal", "Ottawa"],
+                "answer": 3
+            },
+            "2": {
+                "question": "Which country has the most natural lakes?",
+                "options": ["United States", "Russia", "Canada", "Brazil"],
+                "answer": 2
+            },
+            "3": {
+                "question": "What is the longest river in the world?",
+                "options": ["Amazon", "Nile", "Yangtze", "Mississippi"],
+                "answer": 1
+            },
+            "4": {
+                "question": "Which desert is the largest in the world?",
+                "options": ["Sahara", "Gobi", "Arctic", "Kalahari"],
+                "answer": 2
+            },
+            "5": {
+                "question": "Mount Everest is located in which two countries?",
+                "options": ["India and Nepal", "China and Nepal", "Tibet and Bhutan", "Pakistan and India"],
+                "answer": 1
+            }
+        },
+        "entertainment": {
+            "1": {
+                "question": "Who played the role of Iron Man in the Marvel Cinematic Universe?",
+                "options": ["Chris Evans", "Robert Downey Jr.", "Chris Hemsworth", "Mark Ruffalo"],
+                "answer": 1
+            },
+            "2": {
+                "question": "Which movie won the Oscar for Best Picture in 2020?",
+                "options": ["1917", "Joker", "Parasite", "Ford v Ferrari"],
+                "answer": 2
+            },
+            "3": {
+                "question": "What is the highest-grossing movie of all time (as of 2024)?",
+                "options": ["Avatar", "Avengers: Endgame", "Titanic", "Star Wars: The Force Awakens"],
+                "answer": 1
+            },
+            "4": {
+                "question": "Which singer is known as the 'Queen of Pop'?",
+                "options": ["Beyoncé", "Madonna", "Britney Spears", "Lady Gaga"],
+                "answer": 1
+            },
+            "5": {
+                "question": "What is the name of the wizarding school in Harry Potter?",
+                "options": ["Hogwarts", "Beauxbatons", "Durmstrang", "Ilvermorny"],
+                "answer": 0
+            }
+        }
+    }
+}
