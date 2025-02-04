@@ -2,14 +2,11 @@ import express from "express";
 import { Webhooks } from "@octokit/webhooks";
 import dotenv from "dotenv";
 import axios from "axios";
-import OpenAI from "openai";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-const webhooks = new Webhooks({ secret: process.env.GITHUB_WEBHOOK_SECRET || "" });
 
 app.use(express.json());
 
@@ -41,12 +38,6 @@ app.post("/webhook", async (req, res) => {
             }
         });
 
-        // Cap the codeToReview length to 8000 tokens
-        const maxTokens = 8000;
-        if (codeToReview.length > maxTokens) {
-            codeToReview = codeToReview.substring(0, maxTokens);
-        }
-
         try {
             const response = await fetch("https://api.openai.com/v1/chat/completions", {
                 method: "POST",
@@ -77,7 +68,6 @@ app.post("/webhook", async (req, res) => {
         } catch (error) {
             console.error("Error calling OpenAI API:", error);
         }
-        
         
     }
 

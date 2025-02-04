@@ -15,7 +15,8 @@
  * 1. Clone the repository.
  * 2. Install dependencies using `npm install`.
  * 3. Configure GitHub webhooks and OpenAI API keys.
- * 4. Run the bot using `npm start`.
+ * 4. Host the project locally using ngrok to expose the local server to the internet.
+ * 5. Run the bot using `npm start`.
  *
  * ## Usage
  * - The bot will automatically review any new pull requests and provide feedback.
