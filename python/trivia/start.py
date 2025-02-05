@@ -1,15 +1,25 @@
 import json
 import os
 
-#open json file in read-mode
-with open("./content.json", "r") as file:
-    content = json.load(file)
+try:
+    #open json file in read-mode
+    with open("./content.json", "r") as file:
+        content = json.load(file)
+except FileNotFoundError:
+    print("Error: Content File Not Found!")
+    exit(1)
 
 topics = content['topics'].keys()
 
+COLOR_INFO = "\033[94m"
+COLOR_SUCCESS = "\033[92m"
+COLOR_WARNING = "\033[93m"
+COLOR_ERROR = "\033[91m"
+COLOR_RESET = "\033[0m"
+
 def start_game():
     while(True):
-        print("Welcome to Trivia!")
+        show_info("Welcome to Trivia!")
 
         for index, topic in enumerate(topics):
             print(f"{index + 1}: {topic.capitalize()}")
@@ -46,18 +56,18 @@ def start_trivia(topic):
                 break
             elif (choice.isdigit() and int(choice) > 0 and int(choice) < len(topic_content[id]["options"])):
                 if (topic_content[id]["answer"] == (int(choice) - 1)):
-                    obtained_point = obtained_point + 1
+                    obtained_point += 1
                     show_success("Correct Answer!")
                 else:
                     show_warning("Wrong Answer!")
-                available_points = available_points + 1
+                available_points += 1
                 break
             else:
                 show_error("Invalid Choice. Please Try Again.")
                 continue
     clear_screen()
     show_success(f"Game Over! You Scored {obtained_point} out of {available_points} points.")
-    print("=================================================================================")
+    print("================================================================================")
 
 
 def clear_screen():
@@ -65,24 +75,16 @@ def clear_screen():
         os.system("cls")
 
 def show_info(message):
-    print("\033[94m", end="")
-    print(message)
-    print("\033[0m", end="")
+    print(f"{COLOR_INFO}{message}{COLOR_RESET}")
 
 def show_success(message):
-    print("\033[92m", end="")
-    print(message)
-    print("\033[0m", end="")
+    print(f"{COLOR_SUCCESS}{message}{COLOR_RESET}")
 
 def show_warning(message):
-    print("\033[93m", end="")
-    print(message)
-    print("\033[0m", end="")
+    print(f"{COLOR_WARNING}{message}{COLOR_RESET}")
 
 def show_error(message):
-    print("\033[91m", end="")
-    print(message)
-    print("\033[0m", end="")
+    print(f"{COLOR_ERROR}{message}{COLOR_RESET}")
 
 clear_screen() # clear screen before game starts
 start_game()
