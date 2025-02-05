@@ -10,4 +10,8 @@ class Queue:
         removed = self.queue.pop(0)
         print(f"{removed} dequeued from queue")
 
-    
+    def view(self):
+        if self.queue:
+            print("Queue: " + " -> ".join(self.queue))
+        else:
+            print("Queue is Empty")
