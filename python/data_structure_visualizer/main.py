@@ -3,6 +3,7 @@ import sys
 from stack_module import Stack
 from queue_module import Queue
 from linked_list_module import LinkedList
+from tree_module import BinaryTree
 from utils import Utils
 
 utils = Utils()
@@ -14,6 +15,7 @@ def main_menu():
         print("1: Stack")
         print("2: Queue")
         print("3: Linked List")
+        print("4: Binary Tree")
 
         choice = input("Select Option [or Enter to Exit]: ")
 
@@ -26,6 +28,9 @@ def main_menu():
         elif (choice == "3"):
             utils.clear_screen()
             linked_list_menu()
+        elif (choice == "4"):
+            utils.clear_screen()
+            binary_tree_menu()
         elif (choice == ""):
             sys.exit()
         else:
@@ -160,6 +165,57 @@ def linked_list_menu():
         else:
             utils.clear_screen()
             utils.show_error("Invalid Option")
+            
+def binary_tree_menu():
+    binary_tree = BinaryTree()
+    while True:
+        utils.show_info("Binary Tree Operations")
+        print("1: Insert Node")
+        print("2: Inorder Traversal")
+        print("3: Preorder Traversal")
+        print("4: Postorder Traversal")
+        print("5: Search Tree")
+        print("6: Back")
+        
+        choice = input("Select Option: ")
+        
+        if (choice == "1"):
+            utils.clear_screen()
+            while True:
+                value = input("Enter Value to Insert: ")
+                if (value != ""):
+                    utils.clear_screen()
+                    binary_tree.insert(value)
+                    break
+                else:
+                    utils.clear_screen()
+                    utils.show_error("Value SHOULD NOT be empty")
+        elif (choice == "2"):
+            utils.clear_screen()
+            binary_tree.inorder_traversal()
+        elif (choice == "3"):
+            utils.clear_screen()
+            binary_tree.preorder_traversal()
+        elif (choice == "4"):
+            utils.clear_screen()
+            binary_tree.postorder_traversal()
+        elif (choice == "5"):
+            utils.clear_screen()
+            while True:
+                value = input("Enter Node to Search: ")
+                if (value != ""):
+                    utils.clear_screen()
+                    binary_tree.search_tree(value)
+                    break
+                else:
+                    utils.clear_screen()
+                    utils.show_error("Value SHOULD NOT be empty")
+        elif (choice == "6"):
+            break
+        else:
+            utils.clear_screen()
+            utils.show_error("Invalid Option")
+            
                     
 
 if __name__ == "__main__":
