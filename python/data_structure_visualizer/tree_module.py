@@ -59,8 +59,8 @@ class BinaryTree:
         
     def postorder_traversal_recursive (self, current_node):
         if current_node:
-            self.preorder_traversal_recursive(current_node.left)
-            self.preorder_traversal_recursive(current_node.right)
+            self.postorder_traversal_recursive(current_node.left)
+            self.postorder_traversal_recursive(current_node.right)
             print(current_node.data, end=" -> ")
             
     def search_tree (self, key):
