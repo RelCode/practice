@@ -16,6 +16,7 @@ def main_menu():
         print("2: Queue")
         print("3: Linked List")
         print("4: Binary Tree")
+        print("5: Sorting")
 
         choice = input("Select Option [or Enter to Exit]: ")
 
@@ -31,6 +32,9 @@ def main_menu():
         elif (choice == "4"):
             utils.clear_screen()
             binary_tree_menu()
+        elif (choice == "5"):
+            utils.clear_screen()
+            sorting_algorithm_menu()
         elif (choice == ""):
             sys.exit()
         else:
@@ -215,6 +219,38 @@ def binary_tree_menu():
         else:
             utils.clear_screen()
             utils.show_error("Invalid Option")
+            
+            
+def sorting_algorithm_menu():
+    while (True):
+        utils.show_info("Sorting Algorithms")
+        arr = [64, 34, 25, 12, 22, 11, 90]
+        print("1: Bubble Sort")
+        print("2: Selection Sort")
+        print("3: Insertion Sort")
+        
+        choice = input("Select Option: ")
+        
+        if (choice == "1"):
+            utils.clear_screen()
+            from algorithms.sorting import bubble_sort
+            utils.show_warning(f"Original Array: {arr}")
+            utils.show_success(f"Sorted Array: {bubble_sort(arr)}")
+        elif (choice == "2"):
+            utils.clear_screen()
+            from algorithms.sorting import selection_sort
+            utils.show_warning(f"Original Array: {arr}")
+            utils.show_success(f"Sorted Array: {selection_sort(arr)}")
+        elif (choice == "3"):
+            utils.clear_screen()
+            from algorithms.sorting import insertion_sort
+            utils.show_warning(f"Original Array: {arr}")
+            utils.show_success(f"Sorted Array: {insertion_sort(arr)}")
+        else:
+            utils.clear_screen()
+            utils.show_error("Invalid Option")
+        
+        
             
                     
 
