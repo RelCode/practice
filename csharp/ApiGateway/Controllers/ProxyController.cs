@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Linq;
-using System.Threading.Tasks;
+using ApiGateway.Models;
 
 namespace ApiGateway.Controllers
 {
@@ -12,17 +9,17 @@ namespace ApiGateway.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        public ProxyController(HttpClient httpClient)
+        public ProxyController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient();
         }
 
-        [HttpGet("fetch-data")]
-        public async Task<IActionResult> GetData()
+        [HttpGet("api/tech")]
+        public async Task<ActionResult<TechNews>> GetTechNews()
         {
-            var response = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/posts");
-            var data = response.Content.ReadFromJsonAsync<object>();
-            return Ok(data);
+            var response = await _httpClient.GetAsync("http://localhost:3001/api/tech");
+            var content = await response.Content.ReadAsStringAsync();
+            return Ok(content);
         }
     }
 }

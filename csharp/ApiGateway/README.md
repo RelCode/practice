@@ -40,3 +40,9 @@ This project is a .NET Core Web API application that serves as an API Gateway. I
 - **/Models**: Contains the data models.
 - **/Services**: Contains the service layer for business logic.
 - **/Podman**: Container was used for containerization of Node.js app and MySQL database.
+
+## Screenshot
+
+Below is a screenshot of the Swagger UI displaying the result after a successful API call to the Node.js server that queries data from a containerized MySQL database.
+
+![Swagger UI](screenshot/swagger.png)
