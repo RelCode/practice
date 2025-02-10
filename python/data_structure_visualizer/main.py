@@ -228,31 +228,35 @@ def sorting_algorithm_menu():
         print("1: Bubble Sort")
         print("2: Selection Sort")
         print("3: Insertion Sort")
+        print("4: Quick Sort")
+        print("5: Merge Sort")
+        print("6: Back")
         
         choice = input("Select Option: ")
         
-        if (choice == "1"):
+        if (choice in ["1", "2", "3", "4", "5"]):
             utils.clear_screen()
-            from algorithms.sorting import bubble_sort
             utils.show_warning(f"Original Array: {arr}")
-            utils.show_success(f"Sorted Array: {bubble_sort(arr)}")
-        elif (choice == "2"):
-            utils.clear_screen()
-            from algorithms.sorting import selection_sort
-            utils.show_warning(f"Original Array: {arr}")
-            utils.show_success(f"Sorted Array: {selection_sort(arr)}")
-        elif (choice == "3"):
-            utils.clear_screen()
-            from algorithms.sorting import insertion_sort
-            utils.show_warning(f"Original Array: {arr}")
-            utils.show_success(f"Sorted Array: {insertion_sort(arr)}")
+            if (choice == "1"):
+                from algorithms.sorting import bubble_sort
+                utils.show_success(f"Bubble Sorted Array: {bubble_sort(arr)}")
+            elif (choice == "2"):
+                from algorithms.sorting import selection_sort
+                utils.show_success(f"Selection Sorted Array: {selection_sort(arr)}")
+            elif (choice == "3"):
+                from algorithms.sorting import insertion_sort
+                utils.show_success(f"Insertion Sorted Array: {insertion_sort(arr)}")
+            elif (choice == "4"):
+                from algorithms.sorting import quick_sort
+                utils.show_success(f"Quick Sorted Array: {quick_sort(arr)}")
+            elif (choice == "5"):
+                from algorithms.sorting import merge_sort
+                utils.show_success(f"Merge Sorted Array: {merge_sort(arr)}")
+        elif (choice == "6"):
+            break
         else:
             utils.clear_screen()
             utils.show_error("Invalid Option")
-        
-        
-            
-                    
-
+         
 if __name__ == "__main__":
     main_menu()
