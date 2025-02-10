@@ -17,6 +17,7 @@ def main_menu():
         print("3: Linked List")
         print("4: Binary Tree")
         print("5: Sorting")
+        print("6: Searching")
 
         choice = input("Select Option [or Enter to Exit]: ")
 
@@ -35,6 +36,9 @@ def main_menu():
         elif (choice == "5"):
             utils.clear_screen()
             sorting_algorithm_menu()
+        elif (choice == "6"):
+            utils.clear_screen()
+            searching_algorithms_menu()
         elif (choice == ""):
             sys.exit()
         else:
@@ -255,6 +259,45 @@ def sorting_algorithm_menu():
         elif (choice == "6"):
             break
         else:
+            utils.clear_screen()
+            utils.show_error("Invalid Option")
+            
+def searching_algorithms_menu():
+    while (True):
+        utils.show_info("Searching Algorithms")
+        arr = [64, 34, 25, 12, 22, 11, 90]
+        print("1: Linear Search")
+        print("2: Binary Search")
+        print("3: Jump Search")
+        print("4: Interpolation Search")
+        print("5: Back")
+        
+        choice = input("Select Option: ")
+        
+        if (choice in ["1", "2", "3", "4"]):
+            utils.clear_screen()
+            utils.show_info(f"Array: {arr}")
+            value = int(input("Enter Value to Search from List above: "))
+            if (choice == "1"):
+                from algorithms.searching import linear_search
+                result = linear_search(arr, value)
+            elif (choice == "2"):
+                from algorithms.searching import binary_search
+                result = binary_search(arr, value)
+            elif (choice == "3"):
+                from algorithms.searching import jump_search
+                result = jump_search(arr, value)
+            elif (choice == "4"):
+                from algorithms.searching import interpolation_search
+                result = interpolation_search(arr, value)
+            utils.clear_screen()
+            if (result >= 0):
+                utils.show_success(f"{value} found at index {result}")
+            else:
+                utils.show_error(f"{value} not found")
+        elif (choice == "5"):
+            break
+        else: 
             utils.clear_screen()
             utils.show_error("Invalid Option")
          
