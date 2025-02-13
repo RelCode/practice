@@ -13,7 +13,7 @@ public class Project
     public string Name { get; set; }
     public string Description { get; set; }
     [Required]
-    public int OwnerId { get; set; }
+    public string OwnerId { get; set; }
 
     public List<TaskItem> Tasks { get; set; } = new();
 }
