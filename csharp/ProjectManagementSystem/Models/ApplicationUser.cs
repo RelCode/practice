@@ -1,9 +1,9 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace ProjectManagementSystem.Models;
 
-public class RegisterModel
+public class ApplicationUser : IdentityUser
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
 }
