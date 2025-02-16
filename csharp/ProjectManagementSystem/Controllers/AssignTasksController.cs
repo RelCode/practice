@@ -30,17 +30,7 @@ public class AssignTasksController : ControllerBase
         if (assignments.Count == 0)
             return NotFound("There are no assigned tasks.");
         var assigner = assignments.Where(a => a.AssignerId == userId).ToList();
-        var assignee = new List<AssignTask>();
-        foreach (var assignmentList in assignments)
-        {
-            foreach (var user in assignmentList.AssigneeIds)
-            {
-                if (user == userId && assignmentList.AssignerId != userId) // user must be in the list of assigned users but not be the assigner
-                {
-                    assignee.Add(assignmentList);
-                }
-            }
-        }
+        var assignee = assignments.Where(a => a.AssigneeIds.Contains(userId) && a.AssignerId != userId).ToList();
         return Ok(new { assigner = assigner, assignee = assignee });
     }
 
