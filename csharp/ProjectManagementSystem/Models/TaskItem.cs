@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectManagementSystem.Models;
 
+public enum TaskStatus { Ready, InProgress, Complete, OnHold }
+public enum TaskPriority { Low, Medium, High }
 public class TaskItem
 {
     [Key]
@@ -16,6 +18,8 @@ public class TaskItem
     public bool IsCompleted { get; set; }
 
     public DateTime DueDate { get; set; }
+    public TaskStatus Status { get; set; }
+    public TaskPriority Priority { get; set; }
     [Required]
     [ForeignKey("Project")]
     public int ProjectId { get; set; }

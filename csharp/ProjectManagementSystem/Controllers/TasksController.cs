@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Data;
 using ProjectManagementSystem.Models;
+using TaskStatus = ProjectManagementSystem.Models.TaskStatus;
 
 namespace ProjectManagementSystem.Controllers;
 
@@ -45,6 +46,8 @@ public class TasksController : ControllerBase
         {
             return Unauthorized("You are not authorized to perform this action");
         }
+
+        taskitem.Status = TaskStatus.Ready;
         taskitem.IsCompleted = false;
         _context.Tasks.Add(taskitem);
         await _context.SaveChangesAsync();
@@ -66,6 +69,8 @@ public class TasksController : ControllerBase
         existingItem.Title = taskItem.Title;
         existingItem.Description = taskItem.Description;
         existingItem.DueDate = taskItem.DueDate;
+        existingItem.Status = taskItem.Status;
+        existingItem.Priority = taskItem.Priority;
         existingItem.IsCompleted = taskItem.IsCompleted;
         existingItem.ProjectId = taskItem.ProjectId;
         await _context.SaveChangesAsync();

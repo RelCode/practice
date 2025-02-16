@@ -72,7 +72,7 @@ public class ProjectsController : ControllerBase
     {
         var userId = _userManager.GetUserId(User);
         if (userId == null)
-            throw new ApplicationException($"User {_userManager.GetUserName(User)} is not logged in.");
+            throw new UnauthorizedAccessException("You are not authorized to access this resource.");
         return userId;
     }
 }
