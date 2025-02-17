@@ -3,7 +3,8 @@ import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
     token: string | null;
-    login: (token: string) => void;
+    userName: string | null;
+    login: (token: string, userName: string) => void;
     logout: () => void;
     isAuthenticated: boolean;
 }
@@ -16,13 +17,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
-    const login = (newToken: string) => {
+    const [userName, setUserName] = useState<string | null>(() => localStorage.getItem('userName'));
+    const login = (newToken: string, loggedInUser: string) => {
         setToken(newToken);
+        setUserName(loggedInUser);
         localStorage.setItem('token', newToken);
+        localStorage.setItem('userName', loggedInUser);
+        window.location.href = "/dashboard";
     }
     const logout = () => {
         setToken(null);
+        setUserName(null);
         localStorage.removeItem('token');
+        localStorage.removeItem('userName');
     }
     useEffect(() => {
         if (token){
@@ -42,7 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     },[token]);
 
     return (
-        <AuthContext.Provider value={{ token, login, logout, isAuthenticated: !!token }}>
+        <AuthContext.Provider value={{ token, userName, login, logout, isAuthenticated: !!token }}>
             {children}
         </AuthContext.Provider>
     )

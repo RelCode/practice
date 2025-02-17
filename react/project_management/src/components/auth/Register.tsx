@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Box, Container, TextField, Button, Typography, Paper, Link } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import { validateEmail } from "../../utils/Validator";
 
 const Register: React.FunctionComponent = () => {
     const [firstName, setFirstName] = useState("");
@@ -9,10 +12,76 @@ const Register: React.FunctionComponent = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
+    const actionLoader = (message: string) : void => {
+            withReactContent(Swal).fire({
+                title: message,
+                allowOutsideClick: false,
+                didOpen: () => {
+                    withReactContent(Swal).showLoading();
+                }
+            })
+        }
+    
+        const showMessage = (swalIcon: SweetAlertIcon, swalTitle: string, swalText: string, swalColor: string = '#1976d2') : void => {
+            withReactContent(Swal).fire({
+                icon: swalIcon,
+                title: swalTitle,
+                text: swalText,
+                confirmButtonColor: swalColor
+            })
+        }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Registration attempt with:", { firstName, lastName, email, password, confirmPassword });
+        if (firstName === "" || lastName === "" || email === "" || password === "" || confirmPassword === "") {
+            showMessage("error", "Error", "Please fill in all fields");
+            return;
+        }
+        if (password !== confirmPassword) {
+            showMessage("error", "Error", "Passwords do not match");
+            return;
+        }
+        if (!validateEmail(email)) {
+            showMessage("error", "Error", "Invalid email address");
+            return;
+        }
+        actionLoader("Creating account...");
+        const payload: object = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password
+        }
+        fetch("/api/auth/register", {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                withReactContent(Swal).close();
+                showMessage("error", "Error", data.errors[0].description);
+                return;
+            }
+            withReactContent(Swal).close();
+            showMessage("success", "Success", "Account created successfully");
+            resetFields();
+        }).catch(error => {
+            console.log("Error: ", error);
+            withReactContent(Swal).close();
+            showMessage("error", "Error", "An error occurred. Please try again later.");
+        });
     };
+
+    const resetFields = () : void => {
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+    }
 
     return (
         <Box
@@ -39,7 +108,6 @@ const Register: React.FunctionComponent = () => {
                     <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             id="firstName"
                             label="First Name"
@@ -50,7 +118,6 @@ const Register: React.FunctionComponent = () => {
                         />
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             id="lastName"
                             label="Last Name"
@@ -60,7 +127,6 @@ const Register: React.FunctionComponent = () => {
                         />
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             id="email"
                             label="Email Address"
@@ -71,7 +137,6 @@ const Register: React.FunctionComponent = () => {
                         />
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             name="password"
                             label="Password"
@@ -82,7 +147,6 @@ const Register: React.FunctionComponent = () => {
                         />
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             name="confirmPassword"
                             label="Confirm Password"
