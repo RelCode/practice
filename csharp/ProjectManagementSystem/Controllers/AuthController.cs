@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ProjectManagementSystem.Data;
 using ProjectManagementSystem.Models;
 
 namespace ProjectManagementSystem.Controllers
@@ -31,9 +30,9 @@ namespace ProjectManagementSystem.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                return BadRequest(result.Errors);
+                return BadRequest(new { message = "Error", errors = result.Errors });
 
-            return Ok(new { message = "User registered successfully" });
+            return Ok(new { success = true });
         }
 
         [HttpPost("login")]
@@ -41,21 +40,20 @@ namespace ProjectManagementSystem.Controllers
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
-                return Unauthorized("Invalid username or password");
+                return Unauthorized(new { message = "Invalid User Details" });
             var res = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
             if (!res.Succeeded)
             {
-                return Unauthorized("Invalid login attempt");
+                return Unauthorized(new { message = "Invalid User Details"});
             }
 
             var token = GenerateJwtToken(user);
-            return Ok(new { token = token, userId = user.Id });
+            return Ok(new { token = token, userId = user.Id, userName = $"{user.FirstName} {user.LastName}" });
         }
 
         private string GenerateJwtToken(ApplicationUser user)
         {
             var secret = _configuration.GetValue<string>("JwtAuth:Key");
-            Console.Write($"AuthController[::]Secret: {secret}");
             if (secret == null)
                 throw new ApplicationException("Secret not found");
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));    

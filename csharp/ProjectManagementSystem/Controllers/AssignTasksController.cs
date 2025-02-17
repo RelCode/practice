@@ -54,6 +54,14 @@ public class AssignTasksController : ControllerBase
         return CreatedAtAction(nameof(GetAssignTasks), new { assignTaskId = assignTask.AssignerId }, assignTask);
     }
 
+    [HttpGet("{taskItemId}")]
+    public async Task<IActionResult> GetAssignmentHistory(int id)
+    {
+        var userId = GetUserId();
+        var assignments = await _context.AssignTasks.Where(a => a.TaskItemId == id && a.AssignerId == userId).ToListAsync();
+        return Ok(assignments);
+    }
+
     private string GetUserId()
     {
         var userId = _userManager.GetUserId(User);
