@@ -7,6 +7,7 @@ interface AuthContextType {
     login: (token: string, userName: string) => void;
     logout: () => void;
     isAuthenticated: boolean;
+    refreshData: boolean;
 }
 
 interface AuthProviderProps {
@@ -49,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     },[token]);
 
     return (
-        <AuthContext.Provider value={{ token, userName, login, logout, isAuthenticated: !!token }}>
+        <AuthContext.Provider value={{ token, userName, login, logout, isAuthenticated: !!token, refreshData: false }}>
             {children}
         </AuthContext.Provider>
     )

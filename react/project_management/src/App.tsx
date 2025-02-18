@@ -4,12 +4,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ProtectedRoute } from './utils/ProtectedRoutes';
 import { Navigation } from './utils/Navigation';
 import { Login, Register } from './components/auth';
-import { Home } from './components';
+import { Home, Dashboard } from './components';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 
 function App() {
-	console.log(localStorage.getItem('token'));
 	return (
 		<AuthProvider>
 			<Router>
@@ -19,7 +18,7 @@ function App() {
 					<Route path="/login" element={<Login />} />
 					<Route path="/register" element={<Register />} />
 					<Route path="/dashboard" element={<ProtectedRoute>
-						<h1>Dashboard</h1>
+						<Dashboard />
 					</ProtectedRoute>} />
 				</Routes>
 			</Router>
