@@ -1,0 +1,14 @@
+{
+    "before": {
+        "text": "The capital of France is Paris.",
+        "tokens": 8,
+        "latency_ms": 150,
+        "confidence": 0.92
+    },
+    "after": {
+        "text": "Paris is the capital of France.",
+        "tokens": 7,
+        "latency_ms": 120,
+        "confidence": 0.95
+    }
+}
