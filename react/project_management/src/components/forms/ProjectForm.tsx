@@ -68,6 +68,11 @@ const fetchCurrentProjectDetails = async () => {
             }
         }).then(response => response.json())
         .then(data => {
+            if(data.message){
+                Swal.close();
+                showMessage("error", "Error", data.message);
+                return;
+            }
             console.log("Data", data);
             Swal.close();
         })
@@ -121,6 +126,12 @@ const handleSubmit = async (e: React.FormEvent) => {
                 showMessage("error", "Error", data.errors[Object.keys(data.errors)[0]][0] || "Please fill in all required fields");
                 return;
             }
+            if(data.message){
+                Swal.close();
+                showMessage("error", "Error", data.message);
+                return;
+            }
+            setId(data.projectId);
             Swal.close();
             showMessage("success", "Success", "Project has been saved successfully");
         }).catch(error => {
@@ -188,20 +199,33 @@ return (
                         }
                     />)}
 
-                    <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                        <Button
-                            variant="outlined"
-                            onClick={() => navigate('/dashboard')}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            startIcon={<SaveIcon />}
-                        >
-                            {projectId ? 'Update Project' : 'Create Project'}
-                        </Button>
+                    <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                        <Box>
+                            {id > 0 && projectName.length > 2 && (
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={() => navigate(`/tasks/create?projectId=${projectId}`)}
+                                >
+                                    Create Tasks for { projectName.substring(0,30) + (projectName.length > 30 ? "..." : "") }
+                                </Button>
+                            )}
+                        </Box>
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => navigate('/dashboard')}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                startIcon={<SaveIcon />}
+                            >
+                                {projectId ? 'Update Project' : 'Create Project'}
+                            </Button>
+                        </Box>
                     </Box>
                 </form>
             </Paper>

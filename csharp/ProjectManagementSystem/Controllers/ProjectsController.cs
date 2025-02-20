@@ -45,11 +45,15 @@ public class ProjectsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddProject([FromBody] Project project)
     {
+        
         var userId = GetUserId();
+        var projectWithSameName = await _context.Projects.Where(p => p.Name.Equals(project.Name)).ToListAsync();
+        if (projectWithSameName.Count > 0)
+            return Unauthorized(new { message = $"Project Titled: {project.Name} Already Exists" });
         project.OwnerId = userId;
         _context.Projects.Add(project);
         await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetProjects), new { id = project.ProjectId }, project);
+        return CreatedAtAction(nameof(GetProjects), new { id = project.ProjectId }, new { project = project, projectId = project.ProjectId });
     }
 
     [HttpPut("{id}")]

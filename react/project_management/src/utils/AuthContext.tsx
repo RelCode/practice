@@ -3,9 +3,8 @@ import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
     token: string | null;
-    userID: string | null;
     userName: string | null;
-    login: (token: string, userId: string, userName: string) => void;
+    login: (token: string, userName: string) => void;
     logout: () => void;
     isAuthenticated: boolean;
     refreshData: boolean;
@@ -19,14 +18,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
-    const [userID, setUserID] = useState<string | null>(() => localStorage.getItem('userID'));
     const [userName, setUserName] = useState<string | null>(() => localStorage.getItem('userName'));
-    const login = (newToken: string, userId: string, loggedInUser: string) => {
+    const login = (newToken: string, loggedInUser: string) => {
         setToken(newToken);
-        setUserID(userId);
         setUserName(loggedInUser);
         localStorage.setItem('token', newToken);
-        localStorage.setItem('userID', userId);
         localStorage.setItem('userName', loggedInUser);
         window.location.href = "/dashboard";
     }
@@ -54,7 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     },[token]);
 
     return (
-        <AuthContext.Provider value={{ token, userID, userName, login, logout, isAuthenticated: !!token, refreshData: false }}>
+        <AuthContext.Provider value={{ token, userName, login, logout, isAuthenticated: !!token, refreshData: false }}>
             {children}
         </AuthContext.Provider>
     )

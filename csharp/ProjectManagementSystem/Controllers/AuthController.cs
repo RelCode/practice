@@ -31,8 +31,7 @@ namespace ProjectManagementSystem.Controllers
 
             if (!result.Succeeded)
                 return BadRequest(new { message = "Error", errors = result.Errors });
-
-            return Ok();
+            return Ok(new { success = true } );
         }
 
         [HttpPost("login")]

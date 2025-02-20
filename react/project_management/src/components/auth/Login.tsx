@@ -65,7 +65,7 @@ const Login: React.FunctionComponent = () => {
                 return;
             }
             withReactContent(Swal).close();
-            login(data.token, data.userId, data.userName);
+            login(data.token, data.userName);
         }).catch(error => {
             console.log("Error: ", error);
             withReactContent(Swal).close();
