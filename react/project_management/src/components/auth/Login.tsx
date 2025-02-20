@@ -10,7 +10,11 @@ import { validateEmail } from "../../utils/Validator";
 const Login: React.FunctionComponent = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { login } = useAuth();
+    const { login, isAuthenticated } = useAuth();
+
+    if(isAuthenticated){
+        window.location.href = "/dashboard";
+    }
 
     const actionLoader = (message: string) : void => {
         withReactContent(Swal).fire({
@@ -54,13 +58,14 @@ const Login: React.FunctionComponent = () => {
             },
         }).then(response => response.json())
         .then(data => {
+            console.log("Data: ", data);
             if(data.message){
                 withReactContent(Swal).close();
                 showMessage("error", "Error", data.message);
                 return;
             }
             withReactContent(Swal).close();
-            login(data.token, data.userName);
+            login(data.token, data.userId, data.userName);
         }).catch(error => {
             console.log("Error: ", error);
             withReactContent(Swal).close();

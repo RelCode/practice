@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../../utils/AuthContext";
 import { Box, Container, TextField, Button, Typography, Paper, Link } from "@mui/material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
@@ -11,6 +12,11 @@ const Register: React.FunctionComponent = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const { isAuthenticated } = useAuth();
+
+    if(isAuthenticated){
+        window.location.href = "/dashboard";
+    }
 
     const actionLoader = (message: string) : void => {
             withReactContent(Swal).fire({
@@ -60,7 +66,8 @@ const Register: React.FunctionComponent = () => {
             },
         }).then(response => response.json())
         .then(data => {
-            if (data.message) {
+            console.log("Data: ", data);
+            if (data.errors) {
                 withReactContent(Swal).close();
                 showMessage("error", "Error", data.errors[0].description);
                 return;

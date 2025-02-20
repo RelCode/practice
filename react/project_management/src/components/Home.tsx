@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../utils/AuthContext';
 import { Link as RouterLink } from 'react-router-dom';
 import {
     Box,
@@ -12,6 +13,10 @@ import {
 import KanbanIcon from '@mui/icons-material/ViewKanban';
 
 const Home: React.FC = () => {
+    const { isAuthenticated } = useAuth();
+    if(isAuthenticated){
+        window.location.href = "/dashboard";
+    }
     return (
         <Box
             sx={{

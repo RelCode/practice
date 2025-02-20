@@ -1,10 +1,10 @@
 import React from 'react';
 import { AuthProvider } from './utils/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ProtectedRoute } from './utils/ProtectedRoutes';
 import { Navigation } from './utils/Navigation';
 import { Login, Register } from './components/auth';
-import { Home, Dashboard } from './components';
+import { Home, Dashboard, ViewTasks } from './components';
+import { ProjectForm } from './components/forms';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 
@@ -17,9 +17,9 @@ function App() {
 					<Route path="/" element={<Home />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/register" element={<Register />} />
-					<Route path="/dashboard" element={<ProtectedRoute>
-						<Dashboard />
-					</ProtectedRoute>} />
+					<Route path="/dashboard" element={<Dashboard />} />
+					<Route path="/view-project" element={<ViewTasks />} />
+					<Route path="/manage-project" element={<ProjectForm />} />
 				</Routes>
 			</Router>
 		</AuthProvider>

@@ -7,13 +7,11 @@ import {
     Button,
     Grid,
     Paper,
-    Chip,
     Card,
     CardContent,
     CardActionArea
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import GroupIcon from '@mui/icons-material/Group';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -22,7 +20,11 @@ import { useAuth } from '../utils/AuthContext';
 
 const Dashboard: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
-    const { token, refreshData } = useAuth();
+    const { token, refreshData, isAuthenticated } = useAuth();
+
+    if(!isAuthenticated){
+        window.location.href = "/login";
+    }
 
     const actionLoader = (message: string) : void => {
         withReactContent(Swal).fire({
@@ -79,7 +81,7 @@ const Dashboard: React.FC = () => {
                         </Box>
                         <Button
                             component={RouterLink}
-                            to="/create-project"
+                            to="/manage-project"
                             variant="contained"
                             startIcon={<AddIcon />}
                             size="large"
@@ -92,7 +94,7 @@ const Dashboard: React.FC = () => {
                         {projects.map((project) => (
                             <Grid item xs={12} sm={6} md={4} key={project.id}>
                                 <Card>
-                                    <CardActionArea component={RouterLink} to={`/project/${project.id}`}>
+                                    <CardActionArea component={RouterLink} to={`/view-project/?projectId=${project.id}`}>
                                         <CardContent>
                                             <Typography variant="h4" gutterBottom>
                                                 {project.name}
