@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,17 +22,13 @@ public class TasksController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpGet("{projectId}")]
-    public async Task<IActionResult> GetTasks(int projectId)
+    [HttpGet("{taskId}/assignees")]
+    public async Task<IActionResult> GetAssignedUsers(int taskId)
     {
-        var userId = GetUserId();
-        var project = await _context.Projects.FindAsync(projectId);
-        if (project == null)
-        {
-            return NotFound("Project not found");
-        }
-        var tasks = await _context.Tasks.Where(t => t.ProjectId == projectId).ToListAsync();
-        return Ok(tasks);
+        var users = await _context.AssignTasks.Where(a => a.TaskItemId == taskId).ToListAsync();
+        if (users.Count == 0)
+            return NotFound(new { message = "Task not found" });
+        return Ok(users);
     }
 
     [HttpPost]
@@ -41,17 +37,13 @@ public class TasksController : ControllerBase
         var userId = GetUserId();
         var project = await _context.Projects.FindAsync(taskitem.ProjectId);
         if (project == null)
-            return NotFound("Project not found");
+            return NotFound(new { message = "Project not found" });
         if (project.OwnerId != userId)
-        {
-            return Unauthorized("You are not authorized to perform this action");
-        }
-
-        taskitem.Status = TaskStatus.Ready;
-        taskitem.IsCompleted = false;
+            return Unauthorized(new { message = "You are not authorized to perform this action" });
+        taskitem.Status = TaskStatus.Pending;
         _context.Tasks.Add(taskitem);
         await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetTasks), new { projectId = taskitem.ProjectId }, taskitem);
+        return Ok();
     }
 
     [HttpPut("{id}")]
@@ -60,21 +52,19 @@ public class TasksController : ControllerBase
         var userId = GetUserId();
         var existingItem = await _context.Tasks.FindAsync(id);
         if (existingItem == null)
-            return NotFound("Task not found");
-        var project  = await _context.Projects.FindAsync(existingItem.ProjectId);
+            return NotFound(new { message = "Task not found" });
+        var project = await _context.Projects.FindAsync(existingItem.ProjectId);
         if (project == null)
-            return NotFound("Project not found");
+            return NotFound(new { message = "Project not found" });
         if (project.OwnerId != userId)
-            return Unauthorized("You are not authorized to perform this action");
+            return Unauthorized(new { message = "You are not authorized to perform this action" });
         existingItem.Title = taskItem.Title;
         existingItem.Description = taskItem.Description;
         existingItem.DueDate = taskItem.DueDate;
         existingItem.Status = taskItem.Status;
-        existingItem.Priority = taskItem.Priority;
-        existingItem.IsCompleted = taskItem.IsCompleted;
         existingItem.ProjectId = taskItem.ProjectId;
         await _context.SaveChangesAsync();
-        return Ok("Task updated");
+        return Ok();
     }
 
     [HttpDelete("{id}")]
@@ -83,14 +73,12 @@ public class TasksController : ControllerBase
         var userId = GetUserId();
         var existingItem = await _context.Tasks.FindAsync(id);
         if (existingItem == null)
-        {
-            return NotFound("Task not found");
-        }
+            return NotFound(new { message = "Task not found" });
         var project = await _context.Projects.FindAsync(existingItem.ProjectId);
         if (project == null)
-            return NotFound("Project not found");
+            return NotFound(new { message = "Project not found" });
         if (project.OwnerId != userId)
-            return Unauthorized("You are not authorized to perform this action");
+            return Unauthorized(new { message = "You are not authorized to perform this action" });
         _context.Tasks.Remove(existingItem);
         await _context.SaveChangesAsync();
         return Ok("Task deleted");

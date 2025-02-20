@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +29,19 @@ public class ProjectsController : ControllerBase
         return Ok(projects);
     }
 
+    [HttpGet("{projectId}/tasks")]
+    public async Task<IActionResult> GetProjectTasks(int projectId)
+    {
+        var userId = GetUserId();
+        var project = await _context.Projects.FindAsync(projectId);
+        if (project == null || project.OwnerId != userId)
+            return Unauthorized(new { message = "Project not found for this user" });
+        var tasks = await _context.Tasks.Where(t => t.ProjectId == projectId).ToListAsync();
+        if (tasks.Count == 0)
+            return NotFound(new { message = "No tasks found for this project" });
+        return Ok(tasks);
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddProject([FromBody] Project project)
     {
@@ -36,7 +49,7 @@ public class ProjectsController : ControllerBase
         project.OwnerId = userId;
         _context.Projects.Add(project);
         await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetProjects), new { id = project.Id }, project);
+        return CreatedAtAction(nameof(GetProjects), new { id = project.ProjectId }, project);
     }
 
     [HttpPut("{id}")]
@@ -53,7 +66,7 @@ public class ProjectsController : ControllerBase
         await _context.SaveChangesAsync();
         return Ok("Project updated");
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProject(int id)
     {

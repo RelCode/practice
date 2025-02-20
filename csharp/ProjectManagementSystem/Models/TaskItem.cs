@@ -1,26 +1,30 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectManagementSystem.Models;
-
-public enum TaskStatus { Ready, InProgress, Complete, OnHold }
-public enum TaskPriority { Low, Medium, High }
-public class TaskItem
+namespace ProjectManagementSystem.Models
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-    [Required]
-    [MaxLength(200)]
-    public string Title { get; set; }
-    public string Description { get; set; }
-    [Required]
-    public bool IsCompleted { get; set; }
+    public enum TaskStatus { Pending, InProgress, Completed, OnHold }
+    public class TaskItem
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int TaskItemId { get; set; }
 
-    public DateTime DueDate { get; set; }
-    public TaskStatus Status { get; set; }
-    public TaskPriority Priority { get; set; }
-    [Required]
-    [ForeignKey("Project")]
-    public int ProjectId { get; set; }
+        [Required]
+        public string Title { get; set; }
+
+        public string Description { get; set; }
+
+        public DateTime DueDate { get; set; }
+
+        public TaskStatus Status { get; set; } = TaskStatus.Pending;
+
+        [Required]
+        [ForeignKey("Project")]
+        public int ProjectId { get; set; } // Every task belongs to a project
+
+        public Project Project { get; set; } // Navigation Property
+
+        public ICollection<AssignTask> Assignments { get; set; } = new List<AssignTask>(); // One-to-Many with AssignTask
+    }
 }

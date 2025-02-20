@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,7 +24,7 @@ namespace ProjectManagementSystem.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] Register model)
         {
             var user = new ApplicationUser { FirstName = model.FirstName, LastName = model.LastName, UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -32,11 +32,11 @@ namespace ProjectManagementSystem.Controllers
             if (!result.Succeeded)
                 return BadRequest(new { message = "Error", errors = result.Errors });
 
-            return Ok(new { success = true });
+            return Ok();
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] Login model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
@@ -44,7 +44,7 @@ namespace ProjectManagementSystem.Controllers
             var res = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
             if (!res.Succeeded)
             {
-                return Unauthorized(new { message = "Invalid User Details"});
+                return Unauthorized(new { message = "Invalid User Details" });
             }
 
             var token = GenerateJwtToken(user);
@@ -56,26 +56,26 @@ namespace ProjectManagementSystem.Controllers
             var secret = _configuration.GetValue<string>("JwtAuth:Key");
             if (secret == null)
                 throw new ApplicationException("Secret not found");
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));    
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);    
-    
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
 
             //claim is used to add identity to JWT token
-            var claims = new[] {    
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),    
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),    
-                new Claim("Date", DateTime.Now.ToString("yyyy-MM-dd")),    
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())    
-            };    
-            
+            var claims = new[] {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("Date", DateTime.Now.ToString("yyyy-MM-dd")),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
-            var token = new JwtSecurityToken(_configuration.GetValue<string>("JwtAuth:Issuer"),    
-                _configuration.GetValue<string>("JwtAuth:Issuer"),    
-                claims,    
-                expires: DateTime.Now.AddMinutes(120),    
-                signingCredentials: credentials);    
-    
-            return new JwtSecurityTokenHandler().WriteToken(token);  
+
+            var token = new JwtSecurityToken(_configuration.GetValue<string>("JwtAuth:Issuer"),
+                _configuration.GetValue<string>("JwtAuth:Issuer"),
+                claims,
+                expires: DateTime.Now.AddMinutes(120),
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

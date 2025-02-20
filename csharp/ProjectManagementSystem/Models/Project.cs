@@ -1,19 +1,25 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-
-namespace ProjectManagementSystem.Models;
-
-public class Project
+namespace ProjectManagementSystem.Models
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; }
-    public string Description { get; set; }
-    [Required]
-    public string OwnerId { get; set; }
-    public List<TaskItem> Tasks { get; set; }
+    public class Project
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ProjectId { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        [Required]
+        [ForeignKey("Owner")]
+        public string OwnerId { get; set; } // User who owns the project
+
+        public ApplicationUser Owner { get; set; } // Navigation property
+
+        public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>(); // One-to-Many Relationship
+    }
 }
