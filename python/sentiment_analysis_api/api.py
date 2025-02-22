@@ -19,10 +19,15 @@ def home():
 @app.post("/predict/")
 def predict_sentiment(request: TextRequest):
     sentiment = sentiment_model.predict([request.text])[0]
-    print("Sentiment: " +sentiment)
     return { "message": sentiment }
 
-@app.post("/predict-batch")
+@app.post("/predict-batch/")
 def predict_sentiments(request: BatchTextRequest):
-    sentiments = sentiment_model.predict([request.texts]).tolist()
-    return {"results": [{"text": txt, "sentiment": sent} for txt, sent in zip(request.texts, sentiments)]}
+    sentiments = sentiment_model.predict(request.texts).tolist()
+    results = list()
+    count: int = 0
+    for sentiment in sentiments:
+        s = { "text": request.texts[count], "sentiment": sentiment }
+        results.append(s)
+        count += 1
+    return {"results": results}

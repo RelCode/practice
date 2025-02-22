@@ -42,7 +42,6 @@ logs/
 *.model
 *.pkl
 *.h5
-data/
 
 # Dependencies
 pip-log.txt
