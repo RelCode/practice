@@ -2,3 +2,4 @@ fastapi~=0.104.1
 pandas==2.2.3
 scikit-learn==1.6.1
 uvicorn~=0.24.0.post1
+prometheus-fastapi-instrumentator==5.9.1
