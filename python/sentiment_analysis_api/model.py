@@ -5,7 +5,11 @@ from sklearn.pipeline import Pipeline
 
 # load dataset
 def load_data():
-    df = pd.read_csv("data/sentiment_data.csv")
+    try:
+        df = pd.read_csv("data/sentiment_data.csv")
+    except:
+        Exception("Error loading dataset")
+        exit(1)
     return df["text"], df["label"]
 
 # train model

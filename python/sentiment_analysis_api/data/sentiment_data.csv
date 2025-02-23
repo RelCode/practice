@@ -129,6 +129,7 @@ text,label
 "Awful product quality.",negative
 "Nothing remarkable here.",neutral
 "Exceeded expectations greatly!",positive
+"Really don't love the design at all.",negative
 "Seriously disappointed.",negative
 "Moderately useful product.",neutral
 "Outstanding performance!",positive
@@ -171,6 +172,7 @@ text,label
 "Very poor support.",negative
 "Nothing special here.",neutral
 "Exceptional quality!",positive
+"Cannot stand how poorly this works.",negative
 "Waste of resources.",negative
 "Acceptable standards.",neutral
 "Fantastic experience!",positive
@@ -188,6 +190,7 @@ text,label
 "Revolutionary features!",positive
 "Deeply frustrating experience.",negative
 "Works as intended mostly.",neutral
+"I hate everything about this product.",negative
 "Stellar performance!",positive
 "Utterly useless product.",negative
 "Average market offering.",neutral
@@ -207,3 +210,4 @@ text,label
 "Disastrous implementation.",negative
 "Moderate effectiveness.",neutral
 "Outstanding product quality!",positive
+"Absolutely despise using this.",negative
