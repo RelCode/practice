@@ -1,5 +1,4 @@
 import axios from "axios";
-import { data } from "react-router-dom";
 
 const localhost = 'http://localhost';
 
@@ -13,13 +12,25 @@ export enum SelectedEndpoint {
     Node = "NodeJS"
 }
 
-interface Response {
+export interface Response {
     data: { summary: string },
     error: string
 }
 
-export const DotNetApi = async (payload: Payload) => {
-
+export const DotNetApi = async (payload: Payload): Promise<Response> => {
+    try {
+        const response = await axios.post("/api/summarize", payload);
+        var res: Response = { data: { summary: '' }, error: '' };
+        if(response?.data?.choices[0]?.message?.content){
+            res.data.summary = response.data.choices[0].message.content;
+        }else{
+            res.error = response.data.error;
+        }
+        return res;
+    }catch(error){
+        console.log("Error",error);
+        throw new Error("Error Occurred");
+    }
 }
 
 export const FastApi = async (payload: Payload): Promise<Response> => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DotNetApi, FastApi, NodeApi, SelectedEndpoint } from './api';
+import { DotNetApi, FastApi, NodeApi, SelectedEndpoint, Response } from './api';
 import { FormControl, InputLabel, Select, MenuItem, TextField, Button, CircularProgress, Card, Typography } from '@mui/material';
 
 const App : React.FC = () => {
@@ -19,10 +19,15 @@ const App : React.FC = () => {
 		}
 		const payload = (url && text) || text ? { text: text } : { text: url };
 		setLoading(true);
-		if(selectedEndpoint === SelectedEndpoint.DotNet){
-			const response = await DotNetApi(payload);
-		}else if(selectedEndpoint === SelectedEndpoint.FastApi){
-			const response = await FastApi(payload);
+		if([SelectedEndpoint.DotNet, SelectedEndpoint.FastApi, SelectedEndpoint.Node].includes(selectedEndpoint)){
+			var response: Response = { data: { summary: '' }, error: '' }; 
+			if(selectedEndpoint === SelectedEndpoint.DotNet){
+				response = await DotNetApi(payload);
+			}else if(selectedEndpoint === SelectedEndpoint.FastApi){
+				response = await FastApi(payload);
+			}else if(selectedEndpoint === SelectedEndpoint.Node){
+				// response = await NodeApi(payload);
+			}
 			setLoading(false);
 			if(response && response.data){
 				setSummary(response.data.summary);
@@ -31,18 +36,11 @@ const App : React.FC = () => {
 			}else{
 				setStatusMsg("Error Occurred");
 			}
-		}else if(selectedEndpoint === SelectedEndpoint.Node){
-			const response = await NodeApi(payload);
 		}else{
 			setLoading(false);
 			setStatusMsg('Invalid Endpoint');
 		}
 	};
-
-	const clearFields = () : void => {
-		setUrl('');
-		setText('');
-	}
 
 	return (
 		<div className="App" style={{ padding: '20px' }}>
