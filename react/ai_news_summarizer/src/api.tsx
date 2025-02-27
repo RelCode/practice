@@ -43,6 +43,12 @@ export const FastApi = async (payload: Payload): Promise<Response> => {
     }
 }
 
-export const NodeApi = async (payload: Payload) => {
-
+export const NodeApi = async (payload: Payload): Promise<Response> => {
+    try {
+        return await axios.post(`${localhost}:5000/api/summarize`, payload);
+    }
+    catch (error) {
+        console.log("Error",error);
+        throw new Error("Error Occurred");
+    }
 }

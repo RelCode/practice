@@ -14,7 +14,6 @@ app.use(cors());
 
 app.post("/api/summarize", async(req,res) => {
     const { text } = req.body;
-    // use HuggingFace API to fetch summarized news
     try {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",{

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DotNetApi, FastApi, NodeApi, SelectedEndpoint, Response } from './api';
 import { FormControl, InputLabel, Select, MenuItem, TextField, Button, CircularProgress, Card, Typography } from '@mui/material';
 
@@ -7,7 +7,6 @@ const App : React.FC = () => {
 	const [text, setText] = useState<string>('');
 	const [summary, setSummary] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(false);
-	const [response, setResponse] = useState<string>('');
 	const [statusMsg, setStatusMsg] = useState<string | null>(null);
 	const [selectedEndpoint, setSelectedEndpoint] = useState<SelectedEndpoint>(SelectedEndpoint.DotNet);
 
@@ -26,7 +25,7 @@ const App : React.FC = () => {
 			}else if(selectedEndpoint === SelectedEndpoint.FastApi){
 				response = await FastApi(payload);
 			}else if(selectedEndpoint === SelectedEndpoint.Node){
-				// response = await NodeApi(payload);
+				response = await NodeApi(payload);
 			}
 			setLoading(false);
 			if(response && response.data){
@@ -45,9 +44,10 @@ const App : React.FC = () => {
 	return (
 		<div className="App" style={{ padding: '20px' }}>
 			<div style={{ maxWidth: '800px', margin: '0 auto' }}>
-				<FormControl fullWidth sx={{ mb: 2 }}>
+				<FormControl fullWidth sx={{ mb: 2, mt:4 }}>
 					<InputLabel>Select Endpoint</InputLabel>
 					<Select
+					sx={{ mb: 2 }}
 					value={selectedEndpoint}
 					onChange={(e) => setSelectedEndpoint(e.target.value as SelectedEndpoint)}
 					>
