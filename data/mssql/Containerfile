@@ -1,0 +1,31 @@
+FROM mcr.microsoft.com/mssql/server:2019-latest
+
+# Define arguments that can be passed during build
+ARG MSSQL_SA_PASSWORD
+ARG ACCEPT_EULA
+ARG MSSQL_PID
+ARG TZ
+
+# Set environment variables
+ENV ACCEPT_EULA=${ACCEPT_EULA}
+ENV MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+ENV MSSQL_PID=${MSSQL_PID}
+ENV TZ=${TZ}
+
+RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
+
+# Add persistent storage
+VOLUME /var/opt/mssql/data
+
+# Add custom configurations
+COPY ./mssql.conf /var/opt/mssql/mssql.conf
+
+# Add startup scripts
+COPY ./setup.sql /docker-entrypoint-initdb.d/
+
+# Expose SQL Server port
+EXPOSE 1433
+
+# Health check
+HEALTHCHECK --interval=10s --timeout=3s \
+    CMD /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q "SELECT 1" || exit 1
