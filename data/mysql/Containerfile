@@ -2,17 +2,12 @@ FROM mysql:8.0
 
 # Define build arguments
 ARG MYSQL_ROOT_PASSWORD
-ARG MYSQL_DATABASE
 ARG MYSQL_USER
 ARG MYSQL_PASSWORD
 ARG TZ
 
-# Set environment variables
-ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-ENV MYSQL_DATABASE=${MYSQL_DATABASE}
-ENV MYSQL_USER=${MYSQL_USER}
-ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
-ENV TZ=${TZ}
+ENV MYSQL_DATABASE=practice
+ENV TZ=Africa/Pretoria
 
 # Set timezone
 RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
@@ -20,7 +15,7 @@ RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 # Add persistent storage
 VOLUME /var/lib/mysql
 
-# Custom MySQL configuration (optional)
+# Custom MySQL configuration
 COPY ./my.cnf /etc/mysql/conf.d/
 
 # Add initialization scripts
@@ -28,3 +23,5 @@ COPY ./init.sql /docker-entrypoint-initdb.d/
 
 # Expose MySQL port
 EXPOSE 3306
+
+CMD ["mysqld"]
