@@ -1,20 +1,15 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
 from transformers import BertTokenizer
 
-class PromptTokenizer:
-    def __init__(self):
-        self.prompt = ""
-        
-    def setPrompt(self, prompt):
-        self.prompt = prompt
-        
-    def tokenize(self):
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        tokens = tokenizer.tokenize(self.prompt)
-        return tokens
-        
+
+app = FastAPI()
+
+class PromptRequest(BaseModel):
+    prompt: str
     
-        
-promptTokenizer = PromptTokenizer()
-promptTokenizer.setPrompt("this here will be the prompt we want tokenized")
-tokens = promptTokenizer.tokenize()
-print(f"Tokens: {tokens}")
+@app.post("/tokenize/")
+async def tokenize(prompt: PromptRequest):
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    token = tokenizer.tokenize(prompt.prompt)
+    return { "token": token }
