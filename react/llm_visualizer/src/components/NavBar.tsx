@@ -8,7 +8,7 @@ import {
     Box,
 } from '@mui/material';
 
-const NavBar = () => {
+const NavBar: React.FC = () => {
     const navigate = useNavigate();
 
     const navItems = [

@@ -23,7 +23,7 @@ const handleTokenization = async () => {
     setLoading(true);
     const submittedPrompt = prompt.trimStart().trimEnd();
     try {
-        const response = await axios.post('http://localhost:8000/tokenize', {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/tokenize`, {
             text: submittedPrompt,
         });
         setProcessed(prompt);
@@ -52,7 +52,12 @@ return (
                     variant="outlined"
                     label="Enter your prompt"
                     value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
+                    onChange={(e) => {
+                        if(e.target.value === ""){
+                            setTokens([]);
+                        }
+                        setPrompt(e.target.value)
+                    }}
                     sx={{ mb: 2 }}
                 />
                 <Button 

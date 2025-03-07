@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { NavBar, Home, Tokenization } from './components';
+import { NavBar, Home, Tokenization, Embeddings } from './components';
 
 const App: React.FC = () => {
 	return (
@@ -10,6 +10,7 @@ const App: React.FC = () => {
 				<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="/tokenization" element={<Tokenization />} />
+					<Route path="/embeddings" element={<Embeddings />} />
 				</Routes>
 			</Router>
 		</div>
