@@ -18,9 +18,6 @@ VOLUME /var/lib/mysql
 # Custom MySQL configuration
 COPY ./my.cnf /etc/mysql/conf.d/
 
-# Add initialization scripts
-COPY ./init.sql /docker-entrypoint-initdb.d/
-
 # Expose MySQL port
 EXPOSE 3306
 

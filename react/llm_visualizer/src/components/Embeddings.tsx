@@ -10,7 +10,7 @@ import axios from "axios";
 const Embeddings: React.FC = () => {
     const [vectors, setVectors] = useState<[][] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const promptText = "This is our prompt";
+    const promptText = "The quick brown fox jumps over the lazy dog.";
     const onTokenClick = async (token: string, index: number) => {
         setLoading(true);
         setVectors(null);
