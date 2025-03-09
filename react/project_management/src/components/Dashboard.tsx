@@ -19,6 +19,7 @@ import Swal, { SweetAlertIcon } from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Project, TaskItem } from '../utils/dataStructures';
 import { useAuth } from '../utils/AuthContext';
+import { Edit, OpenInFull } from '@mui/icons-material';
 
 const Dashboard: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -72,7 +73,7 @@ const Dashboard: React.FC = () => {
     console.log("Projects", projects);
 
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: 'grey.100', py: 4 }}>
+        <Box sx={{ py: 4 }}>
             <Container maxWidth="lg">
             <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
@@ -97,11 +98,11 @@ const Dashboard: React.FC = () => {
                 {projects.map((project) => (
                     <Grid item xs={12} sm={6} md={4} key={project.projectId}>
                     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <CardActionArea 
+                        {/* <CardActionArea 
                         component={RouterLink} 
                         to={`/view-project/?projectId=${project.projectId}`}
                         sx={{ height: '100%' }}
-                        >
+                        > */}
                         <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                             <Typography variant="h4" gutterBottom>
                             {project.name}
@@ -109,11 +110,37 @@ const Dashboard: React.FC = () => {
                             <Typography variant="h6" color="text.secondary">
                             {project.description}
                             </Typography>
-                            <Typography variant="h5" color="text.primary" sx={{ mt: 'auto', pt: 2 }}>
-                            Number of Tasks: {project?.tasks ? project.tasks.length : 0}
-                            </Typography>
+                            <Box
+                            sx={{
+                                mt: 'auto',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                            >
+                                <Typography variant="h5" color="text.primary" sx={{ mt: 'auto', pt: 2 }}>
+                                    Number of Tasks: {project?.tasks ? project.tasks.length : 0}
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                    <Button
+                                        component={RouterLink}
+                                        to={`/view-project/?projectId=${project.projectId}`}
+                                        variant="outlined"
+                                        size="large"
+                                    >
+                                        <OpenInFull />
+                                    </Button>
+                                    <Button 
+                                        component={RouterLink}
+                                        to={`/manage-project/?projectId=${project.projectId}`}
+                                        sx={{ ml: 2 }} variant="contained" size="large"
+                                    >
+                                        <Edit />
+                                    </Button>
+                                </Box>
+                            </Box>
                         </CardContent>
-                        </CardActionArea>
+                        {/* </CardActionArea> */}
                     </Card>
                     </Grid>
                 ))}

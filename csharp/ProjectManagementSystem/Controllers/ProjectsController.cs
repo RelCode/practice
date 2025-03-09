@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Data;
 using ProjectManagementSystem.Models;
+using System.Security.Claims;
 
 namespace ProjectManagementSystem.Controllers;
 
@@ -42,13 +43,25 @@ public class ProjectsController : ControllerBase
         return Ok(tasks);
     }
 
+    [HttpGet("{projectId}")]
+    public async Task<IActionResult> GetProject(int projectId)
+    {
+        var userId = GetUserId();
+        var project = await _context.Projects.FindAsync(projectId);
+        if (project == null)
+            return Unauthorized(new { message = "No Project Found with Matching ID" });
+        if (project.OwnerId != userId)
+            return Unauthorized(new { message = "You are unauthorized to view this project" });
+        return Ok(project);
+    }
+
     [HttpPost]
     public async Task<IActionResult> AddProject([FromBody] Project project)
     {
         
         var userId = GetUserId();
-        var projectWithSameName = await _context.Projects.Where(p => p.Name.Equals(project.Name)).ToListAsync();
-        if (projectWithSameName.Count > 0)
+        var sameName = await _context.Projects.Where(p => p.Name.Equals(project.Name) && p.OwnerId.Equals(userId)).ToListAsync();
+        if (sameName.Count > 0)
             return Unauthorized(new { message = $"Project Titled: {project.Name} Already Exists" });
         project.OwnerId = userId;
         _context.Projects.Add(project);
@@ -59,16 +72,35 @@ public class ProjectsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProject(int id, [FromBody] Project project)
     {
-        var userId = GetUserId();
+        // Assuming this is in a controller with User property
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from claims
+
         var existingProject = await _context.Projects.FindAsync(id);
         if (existingProject == null)
             return NotFound("Project not found");
+
         if (existingProject.OwnerId != userId)
             return Unauthorized("You are not authorized to update this project");
+
+        // Update basic properties
         existingProject.Name = project.Name;
         existingProject.Description = project.Description;
+
+        // Handle task associations if needed
+        if (project.Tasks != null)
+        {
+            // Clear existing associations and add new ones
+            var projectTasks = await _context.Tasks.Where(pt => pt.ProjectId == id).ToListAsync();
+            _context.Tasks.RemoveRange(projectTasks);
+
+            foreach (var task in project.Tasks)
+            {
+                _context.Tasks.Add(new TaskItem { ProjectId = id, TaskItemId = task.TaskItemId });
+            }
+        }
+
         await _context.SaveChangesAsync();
-        return Ok("Project updated");
+        return CreatedAtAction(nameof(GetProjects), new { id = project.ProjectId }, new { project = project, projectId = project.ProjectId });
     }
 
     [HttpDelete("{id}")]

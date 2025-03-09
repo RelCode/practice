@@ -73,7 +73,9 @@ const fetchCurrentProjectDetails = async () => {
                 showMessage("error", "Error", data.message);
                 return;
             }
-            console.log("Data", data);
+            setId(data['projectId']);
+            setProjectName(data['name']);
+            setProjectDescription(data['description']);
             Swal.close();
         })
         .catch(error => {
@@ -89,8 +91,9 @@ const fetchCurrentProjectDetails = async () => {
 
 useEffect(() => {
     // Fetch available tasks
-    projectId && fetchCurrentProjectDetails();
+    projectId && Number(projectId) !== 0 && fetchCurrentProjectDetails();
 }, []);
+console.log("Project ID", projectId);
 
 const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
