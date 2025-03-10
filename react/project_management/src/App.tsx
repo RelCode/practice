@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navigation } from './utils/Navigation';
 import { Login, Register } from './components/auth';
 import { Home, Dashboard, ViewTasks } from './components';
-import { ProjectForm } from './components/forms';
+import { ProjectForm, TaskForm } from './components/forms';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 
@@ -20,6 +20,7 @@ function App() {
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/view-project" element={<ViewTasks />} />
 					<Route path="/manage-project" element={<ProjectForm />} />
+					<Route path="/manage-task" element={<TaskForm />} />
 				</Routes>
 			</Router>
 		</AuthProvider>

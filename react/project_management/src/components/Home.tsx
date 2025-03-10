@@ -20,8 +20,7 @@ const Home: React.FC = () => {
     return (
         <Box
             sx={{
-                minHeight: '100vh',
-                bgcolor: 'grey.100',
+                py: 4,
                 display: 'flex',
                 alignItems: 'center',
             }}
