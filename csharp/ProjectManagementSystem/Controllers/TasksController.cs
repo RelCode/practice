@@ -22,6 +22,21 @@ public class TasksController : ControllerBase
         _userManager = userManager;
     }
 
+    [HttpGet("{projectId}")]
+    public async Task<IActionResult> GetTasksInProject(int projectId)
+    {
+        var userId = GetUserId();
+        var project = await _context.Projects.FindAsync(projectId);
+        if (project == null)
+            return NotFound(new { message = "Project not found" });
+        if (project.OwnerId != userId)
+            return Unauthorized(new { message = "You are not allowed to perform action" });
+        var tasks = await _context.Tasks.Where(t => t.ProjectId == project.ProjectId).ToListAsync();
+        if (tasks == null)
+            return NotFound(new { message = "Tasks not found" });
+        return Ok(tasks);
+    }
+
     [HttpGet("{taskId}/assignees")]
     public async Task<IActionResult> GetAssignedUsers(int taskId)
     {

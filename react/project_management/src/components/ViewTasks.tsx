@@ -7,15 +7,16 @@ import withReactContent from 'sweetalert2-react-content';
 import { TaskItem } from '../utils/dataStructures';
 import { useAuth } from '../utils/AuthContext';
 
-import {Box,
-Container,
-Typography,
-Button,
-Grid,
-Paper,
-Card,
-CardContent,
-CardActionArea,
+import {
+    Box,
+    Container,
+    Typography,
+    Button,
+    Grid,
+    Paper,
+    Card,
+    CardContent,
+    CardActionArea,
 } from '@mui/material';
 
 const ViewTasks: React.FC = () => {
@@ -47,7 +48,7 @@ const showMessage = (swalIcon: SweetAlertIcon, swalTitle: string, swalText: stri
     });
 };
 
-useEffect(() => {
+const fetchProjectTasks = async () => {
     actionLoader("Loading tasks...");
     fetch(`/api/tasks/${projectId}`,{
         method: "GET",
@@ -72,12 +73,16 @@ useEffect(() => {
         console.error("Error", error);
         showMessage("error", "Error", "An error occurred while loading tasks");
     });
+}
+
+useEffect(() => {
+    fetchProjectTasks();
 }, [projectId, token]);
 
 console.log("Tasks Length: ", tasks.length);
 
 return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.100', py: 4 }}>
+    <Box sx={{ py: 4 }}>
         <Container maxWidth="lg">
             <Paper elevation={3} sx={{ p: 4 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
@@ -89,7 +94,7 @@ return (
                     </Box>
                     <Button
                         component={RouterLink}
-                        to={`/project/${projectId}/create-task`}
+                        to={`/manage-task?action=create&projectId=${projectId}`}
                         variant="contained"
                         startIcon={<AddIcon />}
                         size="large"
