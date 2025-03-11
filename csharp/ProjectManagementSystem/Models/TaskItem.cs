@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementSystem.Models
 {
-    public enum TaskStatus { Pending, InProgress, Completed, OnHold }
+    public enum TaskStatus { Ready, InProgress, Completed, OnHold }
     public class TaskItem
     {
         [Key]
@@ -17,7 +17,7 @@ namespace ProjectManagementSystem.Models
 
         public DateTime DueDate { get; set; }
 
-        public TaskStatus Status { get; set; } = TaskStatus.Pending;
+        public TaskStatus Status { get; set; } = TaskStatus.Ready;
 
         [Required]
         [ForeignKey("Project")]

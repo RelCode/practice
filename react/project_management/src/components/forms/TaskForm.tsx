@@ -4,7 +4,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { TaskItem } from '../../utils/dataStructures';
+import { TaskItem, TaskStatus } from '../../utils/dataStructures';
 import { useAuth } from '../../utils/AuthContext';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -107,6 +107,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 
     const taskData = {
+        taskId: 0,
         title: taskName,
         description: taskDescription,
         dueDate: dueDate?.toISOString(),
@@ -174,7 +175,6 @@ return (
                         value={taskName}
                         onChange={(e) => setTaskName(e.target.value)}
                         margin="normal"
-                        required
                     />
 
                     <TextField
@@ -185,7 +185,6 @@ return (
                         margin="normal"
                         multiline
                         rows={4}
-                        required
                     />
 
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -193,7 +192,7 @@ return (
                             label="Due Date"
                             value={dueDate}
                             onChange={(newValue) => setDueDate(newValue)}
-                            slotProps={{ textField: { fullWidth: true, margin: 'normal', required: true } }}
+                            slotProps={{ textField: { fullWidth: true, margin: 'normal' } }}
                         />
                     </LocalizationProvider>
 
@@ -205,17 +204,18 @@ return (
                             label="Status"
                             onChange={(e) => setTaskStatus(e.target.value)}
                         >
-                            <MenuItem value="New">New</MenuItem>
-                            <MenuItem value="In Progress">In Progress</MenuItem>
-                            <MenuItem value="Completed">Completed</MenuItem>
-                            <MenuItem value="On Hold">On Hold</MenuItem>
+                            {Object.keys(TaskStatus).map((status: string, index: number) => (
+                                <MenuItem key={status} value={status}>
+                                    {Object.values(TaskStatus)[index]}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
 
                     <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
                         <Button
                             variant="outlined"
-                            onClick={() => navigate(projectId ? `/projects/edit?projectId=${projectId}` : '/dashboard')}
+                            onClick={() => navigate(projectId ? `/view-project?projectId=${projectId}` : '/dashboard')}
                         >
                             Cancel
                         </Button>
