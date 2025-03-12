@@ -107,12 +107,14 @@ const handleSubmit = async (e: React.FormEvent) => {
     }
 
     const taskData = {
-        taskId: 0,
+        taskId: "",
         title: taskName,
         description: taskDescription,
         dueDate: dueDate?.toISOString(),
         status: taskStatus,
-        projectId: projectId
+        projectId: projectId,
+        project: {},
+        assignments: []
     };
 
     actionLoader(taskId ? "Updating task..." : "Creating task...");
@@ -120,6 +122,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     try {
         const url = taskId ? `/api/tasks/${taskId}` : "/api/tasks";
         const method = taskId ? "PUT" : "POST";
+        console.log("properties", [url, method, taskData]);
         fetch(url, {
             method: method,
             headers: {
@@ -129,6 +132,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             body: JSON.stringify(taskData)
         }).then(response => response.json())
         .then(data => {
+            console.log("is there feedback? ", data);
             if(data.errors){
                 showMessage("error", "Error", data.errors[Object.keys(data.errors)[0]][0] || "Please fill in all required fields");
                 return;
