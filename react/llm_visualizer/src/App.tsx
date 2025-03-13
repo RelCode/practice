@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { NavBar, Home, Tokenization, Embeddings } from './components';
+import { NavBar, Home, Tokenization, Embeddings, SelfAttention } from './components';
 
 const App: React.FC = () => {
 	return (
@@ -11,6 +11,7 @@ const App: React.FC = () => {
 					<Route path="/" element={<Home />} />
 					<Route path="/tokenization" element={<Tokenization />} />
 					<Route path="/embeddings" element={<Embeddings />} />
+					<Route path="/attention" element={<SelfAttention />} />
 				</Routes>
 			</Router>
 		</div>
