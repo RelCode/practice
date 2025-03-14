@@ -49,13 +49,15 @@ public class TasksController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTask([FromBody] TaskItem taskitem)
     {
+        Console.WriteLine(taskitem.Title);
         var userId = GetUserId();
         var project = await _context.Projects.FindAsync(taskitem.ProjectId);
         if (project == null)
             return NotFound(new { message = "Project not found" });
         if (project.OwnerId != userId)
             return Unauthorized(new { message = "You are not authorized to perform this action" });
-        taskitem.Status = TaskStatus.Pending;
+        taskitem.Status = TaskStatus.Ready;
+        taskitem.Project = project;
         _context.Tasks.Add(taskitem);
         await _context.SaveChangesAsync();
         return Ok();

@@ -209,7 +209,7 @@ return (
                             onChange={(e) => setTaskStatus(e.target.value)}
                         >
                             {Object.keys(TaskStatus).map((status: string, index: number) => (
-                                <MenuItem key={status} value={status}>
+                                <MenuItem key={status} value={index}>
                                     {Object.values(TaskStatus)[index]}
                                 </MenuItem>
                             ))}
