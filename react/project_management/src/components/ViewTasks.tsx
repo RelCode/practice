@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link as RouterLink, useSearchParams } from 'react-router-dom';
+import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
@@ -50,36 +50,36 @@ const showMessage = (swalIcon: SweetAlertIcon, swalTitle: string, swalText: stri
 
 const fetchProjectTasks = async () => {
     actionLoader("Loading tasks...");
-    fetch(`/api/tasks/${projectId}`,{
+    const fetched = await fetch(`/api/tasks/${projectId}`,{
         method: "GET",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.message){
-            Swal.close();
-            showMessage("error", "Error", data.message);
-            return;
-        }
-        console.log("Data",data);
-        Swal.close();
-        setTasks(data);
-    })
-    .catch(error => {
-        Swal.close();
-        console.error("Error", error);
-        showMessage("error", "Error", "An error occurred while loading tasks");
     });
+    console.log("Fetched",fetched);
+    Swal.close();
+    // .then(response => response.json())
+    // .then(data => {
+    //     if(data.message){
+    //         Swal.close();
+    //         showMessage("error", "Error", data.message);
+    //         return;
+    //     }
+    //     console.log("Data",data);
+    //     Swal.close();
+    //     setTasks(data);
+    // })
+    // .catch(error => {
+    //     Swal.close();
+    //     console.error("Error", error);
+    //     showMessage("error", "Error", "An error occurred while loading tasks");
+    // });
 }
 
 useEffect(() => {
     fetchProjectTasks();
 }, [projectId, token]);
-
-console.log("Tasks Length: ", tasks.length);
 
 return (
     <Box sx={{ py: 4 }}>

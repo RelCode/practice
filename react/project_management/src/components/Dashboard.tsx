@@ -24,7 +24,7 @@ import { Edit, OpenInFull } from '@mui/icons-material';
 const Dashboard: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [tasks, setTasks] = useState<TaskItem[]>([]);
-    const { token, refreshData, isAuthenticated } = useAuth();
+    const { token, setTempProject, refreshData, isAuthenticated } = useAuth();
 
     if(!isAuthenticated){
         window.location.href = "/login";
@@ -123,6 +123,7 @@ const Dashboard: React.FC = () => {
                                 </Typography>
                                 <Box sx={{ display: 'flex', gap: 2 }}>
                                     <Button
+                                        onClick={() => setTempProject(project)}
                                         component={RouterLink}
                                         to={`/view-project/?projectId=${project.projectId}`}
                                         variant="outlined"
@@ -131,6 +132,7 @@ const Dashboard: React.FC = () => {
                                         <OpenInFull />
                                     </Button>
                                     <Button 
+                                        onClick={() => setTempProject(project)}
                                         component={RouterLink}
                                         to={`/manage-project/?projectId=${project.projectId}`}
                                         sx={{ ml: 2 }} variant="contained" size="large"

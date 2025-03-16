@@ -24,7 +24,7 @@ import {
 
 const TaskForm: React.FC = () => {
 const navigate = useNavigate();
-const { token, isAuthenticated } = useAuth();
+const { token, project, isAuthenticated } = useAuth();
 const [id, setId] = useState<number>(0);
 const [taskName, setTaskName] = useState<string>("");
 const [taskDescription, setTaskDescription] = useState<string>("");
@@ -112,8 +112,8 @@ const handleSubmit = async (e: React.FormEvent) => {
         description: taskDescription,
         dueDate: dueDate?.toISOString(),
         status: taskStatus,
-        projectId: projectId,
-        project: {},
+        projectId: project?.projectId,
+        project: project,
         assignments: []
     };
 
