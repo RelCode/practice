@@ -23,6 +23,7 @@ namespace ProjectManagementSystem.Models
         [ForeignKey("Project")]
         public int ProjectId { get; set; } // Every task belongs to a project
 
+        [System.Text.Json.Serialization.JsonIgnore]
         public Project Project { get; set; } // Navigation Property
 
         public ICollection<AssignTask> Assignments { get; set; } = new List<AssignTask>(); // One-to-Many with AssignTask

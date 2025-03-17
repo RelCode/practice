@@ -31,7 +31,7 @@ public class TasksController : ControllerBase
             return NotFound(new { message = "Project not found" });
         if (project.OwnerId != userId)
             return Unauthorized(new { message = "You are not allowed to perform action" });
-        var tasks = await _context.Tasks.Where(t => t.ProjectId == project.ProjectId).ToListAsync();
+        var tasks = await _context.Tasks.Where(t => t.ProjectId == projectId).ToListAsync();
         if (tasks == null)
             return NotFound(new { message = "Tasks not found" });
         return Ok(tasks);
@@ -49,18 +49,18 @@ public class TasksController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTask([FromBody] TaskItem taskitem)
     {
-        Console.WriteLine(taskitem.Title);
         var userId = GetUserId();
         var project = await _context.Projects.FindAsync(taskitem.ProjectId);
         if (project == null)
             return NotFound(new { message = "Project not found" });
         if (project.OwnerId != userId)
             return Unauthorized(new { message = "You are not authorized to perform this action" });
+        Console.WriteLine("Status: " + taskitem.Status);
         taskitem.Status = TaskStatus.Ready;
         taskitem.Project = project;
         _context.Tasks.Add(taskitem);
         await _context.SaveChangesAsync();
-        return Ok();
+        return Ok(new { status = "success" });
     }
 
     [HttpPut("{id}")]
