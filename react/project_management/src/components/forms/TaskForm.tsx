@@ -5,6 +5,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { TaskItem, TaskStatus } from '../../utils/dataStructures';
+import * as _ from "lodash";
 import { useAuth } from '../../utils/AuthContext';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -98,7 +99,7 @@ useEffect(() => {
     taskId && Number(taskId) !== 0 && fetchCurrentTaskDetails();
 }, []);
 
-const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) : Promise<any> => {
     e.preventDefault();
     
     if (!taskName.trim() || !taskDescription.trim() || !dueDate) {
@@ -116,6 +117,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         project: project,
         assignments: []
     };
+    console.log("Task Data", taskData);
 
     actionLoader(taskId ? "Updating task..." : "Creating task...");
 
@@ -145,11 +147,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             setId(data.taskId);
             Swal.close();
             showMessage("success", "Success", "Task has been saved successfully");
-            if (projectId) {
-                setTimeout(() => navigate(`/projects/edit?projectId=${projectId}`), 1500);
-            } else {
-                setTimeout(() => navigate('/dashboard'), 1500);
-            }
+            setTimeout(() => navigate(`/projects/view-project?projectId=${projectId}`), 1500);
         }).catch(error => {
             console.log("Error", error);
             Swal.close();
@@ -208,9 +206,9 @@ return (
                             label="Status"
                             onChange={(e) => setTaskStatus(e.target.value)}
                         >
-                            {Object.keys(TaskStatus).map((status: string, index: number) => (
+                            {_.map(TaskStatus, (status:string, index:number) => (
                                 <MenuItem key={status} value={index}>
-                                    {Object.values(TaskStatus)[index]}
+                                    {status}
                                 </MenuItem>
                             ))}
                         </Select>

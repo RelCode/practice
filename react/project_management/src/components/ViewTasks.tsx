@@ -4,7 +4,8 @@ import AddIcon from '@mui/icons-material/Add';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { TaskItem } from '../utils/dataStructures';
+import { TaskItem, TaskStatus } from '../utils/dataStructures';
+import * as _ from "lodash";
 import { useAuth } from '../utils/AuthContext';
 
 import {
@@ -18,6 +19,7 @@ import {
     CardContent,
     CardActionArea,
 } from '@mui/material';
+import { el } from 'date-fns/locale';
 
 const ViewTasks: React.FC = () => {
 const [tasks, setTasks] = useState<TaskItem[]>([]);
@@ -50,36 +52,47 @@ const showMessage = (swalIcon: SweetAlertIcon, swalTitle: string, swalText: stri
 
 const fetchProjectTasks = async () => {
     actionLoader("Loading tasks...");
-    const fetched = await fetch(`/api/tasks/${projectId}`,{
+    fetch(`/api/tasks/${projectId}`,{
         method: "GET",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.message){
+            Swal.close();
+            showMessage("error", "Error", data.message);
+            return;
+        }
+        console.log("Data",data);
+        Swal.close();
+        setTasks(data);
+    })
+    .catch(error => {
+        Swal.close();
+        console.error("Error", error);
+        showMessage("error", "Error", "An error occurred while loading tasks");
     });
-    console.log("Fetched",fetched);
-    Swal.close();
-    // .then(response => response.json())
-    // .then(data => {
-    //     if(data.message){
-    //         Swal.close();
-    //         showMessage("error", "Error", data.message);
-    //         return;
-    //     }
-    //     console.log("Data",data);
-    //     Swal.close();
-    //     setTasks(data);
-    // })
-    // .catch(error => {
-    //     Swal.close();
-    //     console.error("Error", error);
-    //     showMessage("error", "Error", "An error occurred while loading tasks");
-    // });
+}
+
+const getStatus = (task: TaskItem): string => {
+    if(task.taskStatus === TaskStatus.Ready){
+        return TaskStatus[TaskStatus.Ready];
+    }else if(task.taskStatus === TaskStatus.InProgress){
+        return "In Progress";
+    }else if(task.taskStatus === TaskStatus.Completed){
+        return TaskStatus[TaskStatus.Completed];
+    }else if(task.taskStatus === TaskStatus.OnHold){
+        return "On Hold";
+    }
+    return "Unknown";
 }
 
 useEffect(() => {
     fetchProjectTasks();
-}, [projectId, token]);
+}, [token]);
 
 return (
     <Box sx={{ py: 4 }}>
@@ -122,7 +135,7 @@ return (
                                         </Typography>
                                         <Box>
                                             <Typography variant="h5" color="primary">
-                                                Status: {task.taskStatus}
+                                                Status: {getStatus(task)}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 Due Date: {new Date(task.dueDate).toLocaleDateString()}
