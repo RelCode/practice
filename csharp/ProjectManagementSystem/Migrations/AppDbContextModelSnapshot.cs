@@ -268,8 +268,6 @@ namespace ProjectManagementSystem.Migrations
 
                     b.HasKey("ProjectId");
 
-                    b.HasIndex("OwnerId");
-
                     b.ToTable("Projects");
                 });
 
@@ -289,16 +287,15 @@ namespace ProjectManagementSystem.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("TaskItemId");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Tasks");
                 });
@@ -379,33 +376,6 @@ namespace ProjectManagementSystem.Migrations
                     b.Navigation("Assigner");
 
                     b.Navigation("TaskItem");
-                });
-
-            modelBuilder.Entity("ProjectManagementSystem.Models.Project", b =>
-                {
-                    b.HasOne("ProjectManagementSystem.Models.ApplicationUser", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("ProjectManagementSystem.Models.TaskItem", b =>
-                {
-                    b.HasOne("ProjectManagementSystem.Models.Project", "Project")
-                        .WithMany("Tasks")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("ProjectManagementSystem.Models.Project", b =>
-                {
-                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("ProjectManagementSystem.Models.TaskItem", b =>
