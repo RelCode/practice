@@ -25,7 +25,7 @@ import {
 
 const TaskForm: React.FC = () => {
 const navigate = useNavigate();
-const { token, project, isAuthenticated } = useAuth();
+const { token, isAuthenticated } = useAuth();
 const [id, setId] = useState<number>(0);
 const [taskName, setTaskName] = useState<string>("");
 const [taskDescription, setTaskDescription] = useState<string>("");
@@ -113,10 +113,13 @@ const handleSubmit = async (e: React.FormEvent) : Promise<any> => {
         description: taskDescription,
         dueDate: dueDate?.toISOString(),
         status: taskStatus,
-        projectId: project?.projectId,
-        project: project,
-        assignments: []
+        projectId: projectId
     };
+
+    if(!TaskStatus.hasOwnProperty(taskStatus)){
+        showMessage("error", "Validation Error", "Invalid task status");
+        return;
+    }
     console.log("Task Data", taskData);
 
     actionLoader(taskId ? "Updating task..." : "Creating task...");
@@ -147,7 +150,7 @@ const handleSubmit = async (e: React.FormEvent) : Promise<any> => {
             setId(data.taskId);
             Swal.close();
             showMessage("success", "Success", "Task has been saved successfully");
-            setTimeout(() => navigate(`/projects/view-project?projectId=${projectId}`), 1500);
+            setTimeout(() => navigate(`/view-project?projectId=${projectId}`), 1500);
         }).catch(error => {
             console.log("Error", error);
             Swal.close();

@@ -3,7 +3,6 @@ export interface Project {
 	name: string;
 	description: string;
 	ownerId: string;
-	tasks: TaskItem[];
 }
 
 export interface TaskItem {
@@ -12,16 +11,16 @@ export interface TaskItem {
     description: string;
     isCompleted: boolean;
     dueDate: string;
-    taskStatus: TaskStatus;
+    status: string;
     taskPriority: TaskPriority;
     projectId: number;
 }
 
-export enum TaskStatus {
-    Ready = "Ready",
-    InProgress = "In Progress",
-    Completed = "Completed",
-    OnHold = "On Hold"
+export const TaskStatus: Record<string, string> = {
+    "Ready": "Ready",
+    "InProgress": "In Progress",
+    "Completed": "Completed",
+    "OnHold": "On Hold"
 }
 
 export enum TaskPriority {

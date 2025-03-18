@@ -20,9 +20,11 @@ import withReactContent from 'sweetalert2-react-content';
 import { Project, TaskItem } from '../utils/dataStructures';
 import { useAuth } from '../utils/AuthContext';
 import { Edit, OpenInFull } from '@mui/icons-material';
+import * as _ from "lodash";
 
 const Dashboard: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
+    const [numberOfTasks, setNumberOfTasks] = useState<{[projectId:number]:number}>({});
     const [tasks, setTasks] = useState<TaskItem[]>([]);
     const { token, setTempProject, refreshData, isAuthenticated } = useAuth();
 
@@ -60,8 +62,10 @@ const Dashboard: React.FC = () => {
         })
         .then(response => response.json())
         .then(data => {
+            console.log("Data||", data);
             Swal.close();
-            setProjects(data);
+            setProjects(data.projects);
+            setNumberOfTasks(data.numberOfTasks);
         })
         .catch(error => {
             Swal.close();
@@ -95,7 +99,7 @@ const Dashboard: React.FC = () => {
                 </Box>
 
                 <Grid container spacing={3}>
-                {projects.map((project) => (
+                {_.map(projects,(project) => (
                     <Grid item xs={12} sm={6} md={4} key={project.projectId}>
                     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                         {/* <CardActionArea 
@@ -119,7 +123,7 @@ const Dashboard: React.FC = () => {
                             }}
                             >
                                 <Typography variant="h5" color="text.primary" sx={{ mt: 'auto', pt: 2 }}>
-                                    Number of Tasks: {project?.tasks ? project.tasks.length : 0}
+                                    Number of Tasks: {numberOfTasks?.[project.projectId]}
                                 </Typography>
                                 <Box sx={{ display: 'flex', gap: 2 }}>
                                     <Button
@@ -160,7 +164,7 @@ const Dashboard: React.FC = () => {
                 </Box>
 
                 <Grid container spacing={3}>
-                {projects.flatMap(project => project.tasks).map((task) => (
+                {/* {projects.flatMap(project => project.tasks).map((task) => (
                     <Grid item xs={12} sm={6} md={4} key={task.id}>
                     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <CardActionArea 
@@ -185,7 +189,7 @@ const Dashboard: React.FC = () => {
                         </CardActionArea>
                     </Card>
                     </Grid>
-                ))}
+                ))} */}
                 </Grid>
             </Paper>
             </Container>

@@ -77,19 +77,6 @@ const fetchProjectTasks = async () => {
     });
 }
 
-const getStatus = (task: TaskItem): string => {
-    if(task.taskStatus === TaskStatus.Ready){
-        return TaskStatus[TaskStatus.Ready];
-    }else if(task.taskStatus === TaskStatus.InProgress){
-        return "In Progress";
-    }else if(task.taskStatus === TaskStatus.Completed){
-        return TaskStatus[TaskStatus.Completed];
-    }else if(task.taskStatus === TaskStatus.OnHold){
-        return "On Hold";
-    }
-    return "Unknown";
-}
-
 useEffect(() => {
     fetchProjectTasks();
 }, [token]);
@@ -135,7 +122,7 @@ return (
                                         </Typography>
                                         <Box>
                                             <Typography variant="h5" color="primary">
-                                                Status: {getStatus(task)}
+                                                Status: {task.status}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
                                                 Due Date: {new Date(task.dueDate).toLocaleDateString()}
