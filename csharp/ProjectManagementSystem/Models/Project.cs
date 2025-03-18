@@ -16,7 +16,5 @@ namespace ProjectManagementSystem.Models
 
         [ForeignKey("Owner")]
         public string OwnerId { get; set; } // User who owns the project
-
-        public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>(); // One-to-Many Relationship
     }
 }

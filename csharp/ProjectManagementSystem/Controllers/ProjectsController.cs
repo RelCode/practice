@@ -27,7 +27,13 @@ public class ProjectsController : ControllerBase
     {
         var userId = GetUserId();
         var projects = await _context.Projects.Where(p => p.OwnerId == userId).ToListAsync();
-        return Ok(projects);
+        var numberOfTasks = new Dictionary<int, int>();
+        foreach(var project in projects)
+        {
+            var tasks = await _context.Tasks.Where(t => t.ProjectId == project.ProjectId).ToListAsync();
+            numberOfTasks[project.ProjectId] = tasks.Count();
+        }
+        return Ok(new { projects, numberOfTasks });
     }
 
     [HttpGet("{projectId}/tasks")]
@@ -85,19 +91,6 @@ public class ProjectsController : ControllerBase
         // Update basic properties
         existingProject.Name = project.Name;
         existingProject.Description = project.Description;
-
-        // Handle task associations if needed
-        if (project.Tasks != null)
-        {
-            // Clear existing associations and add new ones
-            var projectTasks = await _context.Tasks.Where(pt => pt.ProjectId == id).ToListAsync();
-            _context.Tasks.RemoveRange(projectTasks);
-
-            foreach (var task in project.Tasks)
-            {
-                _context.Tasks.Add(new TaskItem { ProjectId = id, TaskItemId = task.TaskItemId });
-            }
-        }
 
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetProjects), new { id = project.ProjectId }, new { project = project, projectId = project.ProjectId });
