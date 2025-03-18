@@ -3,7 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementSystem.Models
 {
-    public enum TaskStatus { Ready, InProgress, Completed, OnHold }
+    public class TaskStatus
+    {
+        public const string Ready = "Ready";
+        public const string InProgress = "In Progress";
+        public const string Completed = "Completed";
+        public const string OnHold = "On Hold";
+    }
     public class TaskItem
     {
         [Key]
@@ -17,15 +23,10 @@ namespace ProjectManagementSystem.Models
 
         public DateTime DueDate { get; set; }
 
-        public TaskStatus Status { get; set; } = TaskStatus.Ready;
+        public string Status { get; set; } = TaskStatus.Ready;
 
         [Required]
         [ForeignKey("Project")]
         public int ProjectId { get; set; } // Every task belongs to a project
-
-        [System.Text.Json.Serialization.JsonIgnore]
-        public Project Project { get; set; } // Navigation Property
-
-        public ICollection<AssignTask> Assignments { get; set; } = new List<AssignTask>(); // One-to-Many with AssignTask
     }
 }

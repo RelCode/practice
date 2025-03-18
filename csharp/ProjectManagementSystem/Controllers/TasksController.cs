@@ -56,8 +56,8 @@ public class TasksController : ControllerBase
         if (project.OwnerId != userId)
             return Unauthorized(new { message = "You are not authorized to perform this action" });
         Console.WriteLine("Status: " + taskitem.Status);
-        taskitem.Status = TaskStatus.Ready;
-        taskitem.Project = project;
+        taskitem.Status = GetTaskStatus(taskitem.Status);
+        Console.WriteLine("Updated Status " + taskitem.Status);
         _context.Tasks.Add(taskitem);
         await _context.SaveChangesAsync();
         return Ok(new { status = "success" });
@@ -107,5 +107,21 @@ public class TasksController : ControllerBase
         if (userId == null)
             throw new UnauthorizedAccessException("You are not authorized to access this resource.");
         return userId;
+    }
+
+    private string GetTaskStatus(string status)
+    {
+        if (status == TaskStatus.Ready)
+            return TaskStatus.Ready;
+        if (status == TaskStatus.InProgress)
+            return TaskStatus.InProgress;
+        if (status == TaskStatus.Completed)
+            return TaskStatus.Completed;
+        if (status == TaskStatus.OnHold)
+            return TaskStatus.OnHold;
+        else
+        {
+            return "";
+        }
     }
 }
