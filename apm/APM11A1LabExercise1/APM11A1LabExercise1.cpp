@@ -6,13 +6,8 @@
 
 int main()
 {
-	StudentMarks studentMarks;
-	CurricularMarks curricularMarks;
 	Results results;
-
-	studentMarks.CaptureStudentInfo();
-	curricularMarks.InputCurricularMark();
-	results.ShowResults(studentMarks, curricularMarks);
+	results.ShowResults();
 }
 
 
