@@ -111,13 +111,13 @@ public class TasksController : ControllerBase
 
     private string GetTaskStatus(string status)
     {
-        if (status == TaskStatus.Ready)
+        if (status == "Ready")
             return TaskStatus.Ready;
-        if (status == TaskStatus.InProgress)
+        if (status == "InProgress")
             return TaskStatus.InProgress;
-        if (status == TaskStatus.Completed)
+        if (status == "Completed")
             return TaskStatus.Completed;
-        if (status == TaskStatus.OnHold)
+        if (status == "OnHold")
             return TaskStatus.OnHold;
         else
         {
