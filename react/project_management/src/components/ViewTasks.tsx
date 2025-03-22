@@ -16,9 +16,9 @@ import {
     Grid,
     Paper,
     Card,
-    CardContent,
-    CardActionArea,
+    CardContent
 } from '@mui/material';
+import { Edit, OpenInFull } from '@mui/icons-material';
 import { el } from 'date-fns/locale';
 
 const ViewTasks: React.FC = () => {
@@ -105,9 +105,9 @@ return (
 
                 <Grid container spacing={3}>
                     { tasks.length > 0 ? tasks.map((task) => (
-                        <Grid item xs={12} sm={6} md={4} key={task.id}>
+                        <Grid item xs={12} sm={6} md={4} key={task.taskItemId}>
                             <Card sx={{ height: '100%', display: 'flex' }}>
-                                <CardActionArea component={RouterLink} to={`/task/${task.id}`} sx={{ height: '100%' }}>
+                                {/* <CardActionArea component={RouterLink} to={`/task/${task.id}`} sx={{ height: '100%' }}> */}
                                     <CardContent sx={{ 
                                         height: '100%', 
                                         display: 'flex', 
@@ -131,8 +131,32 @@ return (
                                                 Assigned to: {task.}
                                             </Typography> */}
                                         </Box>
+                                        { task.status !== TaskStatus.Completed ? (<Box
+                                        sx={{
+                                            mt: 'auto',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                        }}
+                                        >
+                                            <Button
+                                                component={RouterLink}
+                                                to={`/manage-task?action=update&projectId=${task.projectId}`}
+                                                variant="outlined"
+                                                size="large"
+                                            >
+                                                <OpenInFull />
+                                            </Button>
+                                            <Button
+                                                component={RouterLink}
+                                                to={`/manage-task?projectId=${task.projectId}&taskId=${task.taskItemId}`}
+                                                sx={{ ml: 2 }} variant="contained" size="large"
+                                            >
+                                                <Edit />
+                                            </Button>
+                                        </Box>) : null }
                                     </CardContent>
-                                </CardActionArea>
+                                {/* </CardActionArea> */}
                             </Card>
                         </Grid>
                     )) : (

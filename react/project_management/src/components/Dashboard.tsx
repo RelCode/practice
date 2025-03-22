@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [numberOfTasks, setNumberOfTasks] = useState<{[projectId:number]:number}>({});
     const [tasks, setTasks] = useState<TaskItem[]>([]);
-    const { token, setTempProject, refreshData, isAuthenticated } = useAuth();
+    const { token, refreshData, isAuthenticated } = useAuth();
 
     if(!isAuthenticated){
         window.location.href = "/login";
@@ -102,11 +102,6 @@ const Dashboard: React.FC = () => {
                 {_.map(projects,(project) => (
                     <Grid item xs={12} sm={6} md={4} key={project.projectId}>
                     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        {/* <CardActionArea 
-                        component={RouterLink} 
-                        to={`/view-project/?projectId=${project.projectId}`}
-                        sx={{ height: '100%' }}
-                        > */}
                         <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                             <Typography variant="h4" gutterBottom>
                             {project.name}
@@ -127,7 +122,6 @@ const Dashboard: React.FC = () => {
                                 </Typography>
                                 <Box sx={{ display: 'flex', gap: 2 }}>
                                     <Button
-                                        onClick={() => setTempProject(project)}
                                         component={RouterLink}
                                         to={`/view-project/?projectId=${project.projectId}`}
                                         variant="outlined"
@@ -136,7 +130,6 @@ const Dashboard: React.FC = () => {
                                         <OpenInFull />
                                     </Button>
                                     <Button 
-                                        onClick={() => setTempProject(project)}
                                         component={RouterLink}
                                         to={`/manage-project/?projectId=${project.projectId}`}
                                         sx={{ ml: 2 }} variant="contained" size="large"
@@ -146,7 +139,6 @@ const Dashboard: React.FC = () => {
                                 </Box>
                             </Box>
                         </CardContent>
-                        {/* </CardActionArea> */}
                     </Card>
                     </Grid>
                 ))}

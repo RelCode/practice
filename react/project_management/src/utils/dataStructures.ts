@@ -6,7 +6,7 @@ export interface Project {
 }
 
 export interface TaskItem {
-    id: number;
+    taskItemId: number;
     title: string;
     description: string;
     isCompleted: boolean;

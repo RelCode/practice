@@ -64,7 +64,7 @@ const showMessage = (swalIcon: SweetAlertIcon, swalTitle: string, swalText: stri
 const fetchCurrentTaskDetails = async () => {
     actionLoader("Loading task details...");
     try {
-        await fetch(`/api/tasks/${taskId}`, {
+        await fetch(`/api/tasks/${projectId}/${taskId}/task`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -72,6 +72,7 @@ const fetchCurrentTaskDetails = async () => {
             }
         }).then(response => response.json())
         .then(data => {
+            console.log("Data",data);
             if(data.message){
                 Swal.close();
                 showMessage("error", "Error", data.message);
@@ -108,7 +109,7 @@ const handleSubmit = async (e: React.FormEvent) : Promise<any> => {
     }
 
     const taskData = {
-        taskId: "",
+        taskId: (projectId && taskId) ? taskId : null,
         title: taskName,
         description: taskDescription,
         dueDate: dueDate?.toISOString(),
@@ -125,8 +126,8 @@ const handleSubmit = async (e: React.FormEvent) : Promise<any> => {
     actionLoader(taskId ? "Updating task..." : "Creating task...");
 
     try {
-        const url = taskId ? `/api/tasks/${taskId}` : "/api/tasks";
-        const method = taskId ? "PUT" : "POST";
+        const url = (projectId && taskId) ? `/api/tasks/${taskId}` : "/api/tasks";
+        const method = (projectId && taskId) ? "PUT" : "POST";
         console.log("properties", [url, method, taskData]);
         fetch(url, {
             method: method,

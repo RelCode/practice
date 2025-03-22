@@ -107,7 +107,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         name: projectName,
         description: projectDescription,
         ownerId: "",
-        taskIds: selectedTasks.map(task => task.id)
+        taskIds: selectedTasks.map(task => task.taskItemId)
     };
     console.log("Project Data", projectData);
 
@@ -196,7 +196,7 @@ return (
                                 <Chip
                                     label={option.title}
                                     {...getTagProps({ index })}
-                                    key={option.id}
+                                    key={option.taskItemId}
                                 />
                             ))
                         }
