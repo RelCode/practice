@@ -37,6 +37,19 @@ public class TasksController : ControllerBase
         return Ok(tasks);
     }
 
+    [HttpGet("{projectId}/{taskId}/task")]
+    public async Task<IActionResult> GetTask(int projectId, int taskId)
+    {
+        var userId = GetUserId();
+        var project = await _context.Projects.FindAsync(projectId);
+        if (project == null)
+            return NotFound(new { message = "Project not found!" });
+        var task = await _context.Tasks.Where(t => t.TaskItemId == taskId && t.ProjectId == projectId).FirstAsync();
+        if (task == null)
+            return NotFound(new { message = "Task Item not found" });
+        return Ok(task);
+    }
+
     [HttpGet("{taskId}/assignees")]
     public async Task<IActionResult> GetAssignedUsers(int taskId)
     {
@@ -50,14 +63,12 @@ public class TasksController : ControllerBase
     public async Task<IActionResult> CreateTask([FromBody] TaskItem taskitem)
     {
         var userId = GetUserId();
-        var project = await _context.Projects.FindAsync(taskitem.ProjectId);
+        var project = await _context.Projects.Where(p => p.ProjectId == taskitem.ProjectId && p.OwnerId == userId).FirstAsync();
         if (project == null)
             return NotFound(new { message = "Project not found" });
         if (project.OwnerId != userId)
             return Unauthorized(new { message = "You are not authorized to perform this action" });
-        Console.WriteLine("Status: " + taskitem.Status);
         taskitem.Status = GetTaskStatus(taskitem.Status);
-        Console.WriteLine("Updated Status " + taskitem.Status);
         _context.Tasks.Add(taskitem);
         await _context.SaveChangesAsync();
         return Ok(new { status = "success" });
@@ -66,22 +77,21 @@ public class TasksController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTask(int id, [FromBody] TaskItem taskItem)
     {
+        Console.WriteLine("Updating Task: " + id);
         var userId = GetUserId();
-        var existingItem = await _context.Tasks.FindAsync(id);
+        var project = await _context.Projects.Where(p => p.OwnerId == userId && p.ProjectId == taskItem.ProjectId).FirstAsync();
+        if (project == null)
+            return NotFound(new { message = "Project not found!" });
+        var existingItem = await _context.Tasks.Where(t => t.ProjectId == project.ProjectId && t.TaskItemId == id).FirstAsync();
         if (existingItem == null)
             return NotFound(new { message = "Task not found" });
-        var project = await _context.Projects.FindAsync(existingItem.ProjectId);
-        if (project == null)
-            return NotFound(new { message = "Project not found" });
-        if (project.OwnerId != userId)
-            return Unauthorized(new { message = "You are not authorized to perform this action" });
         existingItem.Title = taskItem.Title;
         existingItem.Description = taskItem.Description;
         existingItem.DueDate = taskItem.DueDate;
-        existingItem.Status = taskItem.Status;
+        existingItem.Status = GetTaskStatus(taskItem.Status);
         existingItem.ProjectId = taskItem.ProjectId;
         await _context.SaveChangesAsync();
-        return Ok();
+        return Ok(new { status = "success" });
     }
 
     [HttpDelete("{id}")]
