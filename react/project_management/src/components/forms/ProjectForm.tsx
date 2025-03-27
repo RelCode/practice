@@ -208,7 +208,7 @@ return (
                                 <Button
                                     variant="contained"
                                     color="secondary"
-                                    onClick={() => navigate(`/manage-task?action=create&projectId=${id}`)}
+                                    onClick={() => navigate(`/task-form?action=create&projectId=${id}`)}
                                 >
                                     Create Tasks for { projectName.substring(0,30) + (projectName.length > 30 ? "..." : "") }
                                 </Button>

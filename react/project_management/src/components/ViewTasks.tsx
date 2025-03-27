@@ -94,7 +94,7 @@ return (
                     </Box>
                     <Button
                         component={RouterLink}
-                        to={`/manage-task?action=create&projectId=${projectId}`}
+                        to={`/task-form?action=create&projectId=${projectId}`}
                         variant="contained"
                         startIcon={<AddIcon />}
                         size="large"
@@ -141,7 +141,7 @@ return (
                                         >
                                             <Button
                                                 component={RouterLink}
-                                                to={`/manage-task?action=update&projectId=${task.projectId}`}
+                                                to={`/manage-task?projectId=${task.projectId}&taskId=${task.taskItemId}`}
                                                 variant="outlined"
                                                 size="large"
                                             >
@@ -149,7 +149,7 @@ return (
                                             </Button>
                                             <Button
                                                 component={RouterLink}
-                                                to={`/manage-task?projectId=${task.projectId}&taskId=${task.taskItemId}`}
+                                                to={`/task-form?projectId=${task.projectId}&taskId=${task.taskItemId}`}
                                                 sx={{ ml: 2 }} variant="contained" size="large"
                                             >
                                                 <Edit />
