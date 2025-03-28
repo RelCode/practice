@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { TaskItem, TaskStatus } from '../../utils/dataStructures';
+import { TaskItem, TaskStatus, User, ColorCodes } from '../../utils/dataStructures';
 import { useAuth } from '../../utils/AuthContext';
 import SaveIcon from '@mui/icons-material/Save';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
@@ -26,7 +26,7 @@ import {
 
 const ManageTask: React.FC = () => {
     const [task, setTask] = useState<TaskItem | null>(null);
-    const [availableUsers, setAvailableUsers] = useState([]);
+    const [availableUsers, setAvailableUsers] = useState<User[]>([]);
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
     const [selectedStatus, setSelectedStatus] = useState('');
     const [loading, setLoading] = useState(true);
@@ -87,9 +87,21 @@ const ManageTask: React.FC = () => {
         }
     };
 
+    const processUserData = (data: any): void => {
+        var userList: User[] = data.userList;
+        var assignedUsers: User[] = data.assignedUsers;
+        console.log("User List", userList);
+        console.log("Assigned Users", assignedUsers);
+        if (assignedUsers.length > 0){
+            console.log("Assigned Users", assignedUsers);
+        }else{
+            setAvailableUsers(userList);
+        }
+    }
+
     const fetchAvailableUsers = async () => {
         try {
-            const response = await fetch(`/api/assignTasks`, {
+            const response = await fetch(`/api/assignTasks/${taskId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -97,23 +109,26 @@ const ManageTask: React.FC = () => {
                 }
             });
             const data = await response.json();
-            console.log("UserData", data);
             
             if (data.message) {
                 showMessage("error", "Error", data.message);
                 return;
             }
-            
-            setAvailableUsers(data);
+            setTask(data.taskItem);
+            processUserData(data);
         } catch (error) {
             console.error("Error", error);
             showMessage("error", "Error", "An error occurred while loading available users");
+        } finally {
+            setLoading(false);
         }
     };
 
+    console.log("Task", task);
+
     useEffect(() => {
         if (taskId) {
-            fetchTaskDetails();
+            // fetchTaskDetails();
             fetchAvailableUsers();
         }
     }, [taskId, token]);
@@ -151,6 +166,10 @@ const ManageTask: React.FC = () => {
         }
     };
 
+    const colorCodeStatus = (status: string): ReactElement => {
+        return (<strong style={{color:ColorCodes[TaskStatus.indexOf(status)]}}>[{status}]</strong>)
+    }
+
     return (
         <Box sx={{ py: 4 }}>
             <Container maxWidth="lg">
@@ -175,37 +194,19 @@ const ManageTask: React.FC = () => {
                                     <Card>
                                         <CardContent>
                                             <Typography variant="h5" gutterBottom>
-                                                {task.title}
+                                                {task.title} { colorCodeStatus(task.status) }
                                             </Typography>
                                             <Typography variant="body1" color="text.secondary" paragraph>
                                                 {task.description}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
-                                                Due Date: {new Date(task.dueDate).toLocaleDateString()}
+                                                Due Date: { task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-za') : 'N/A' }
                                             </Typography>
                                         </CardContent>
                                     </Card>
                                 </Grid>
 
-                                <Grid item xs={12} md={6}>
-                                    <FormControl fullWidth>
-                                        <InputLabel id="status-select-label">Task Status</InputLabel>
-                                        <Select
-                                            labelId="status-select-label"
-                                            value={selectedStatus}
-                                            label="Task Status"
-                                            // onChange={(e) => setSelectedStatus(e.target.value as TaskStatus)}
-                                        >
-                                            {Object.values(TaskStatus).map((status) => (
-                                                <MenuItem key={status} value={status}>
-                                                    {status}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-
-                                <Grid item xs={12} md={6}>
+                                <Grid item xs={12}>
                                     <FormControl fullWidth>
                                         <InputLabel id="users-select-label">Assign Users</InputLabel>
                                         <Select
@@ -213,28 +214,36 @@ const ManageTask: React.FC = () => {
                                             multiple
                                             value={selectedUsers}
                                             onChange={(e) => setSelectedUsers(e.target.value as string[])}
-                                            // renderValue={(selected) => (
-                                            //     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                            //         {selected.map((value) => {
-                                            //             const user = availableUsers.find(u => u.userId === value);
-                                            //             return (
-                                            //                 <Chip key={value} label={user?.userName || value} />
-                                            //             );
-                                            //         })}
-                                            //     </Box>
-                                            // )}
+                                            renderValue={(selected) => (
+                                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => {
+                                                        const user = availableUsers.find(u => u.userId === value);
+                                                        return (
+                                                            <Chip key={value} label={user?.lastName || value} />
+                                                        );
+                                                    })}
+                                                </Box>
+                                            )}
                                         >
-                                            {/* {availableUsers.map((user) => (
+                                            {availableUsers.map((user) => (
                                                 <MenuItem key={user.userId} value={user.userId}>
-                                                    {user.userName}
+                                                    {user.firstName} {user.lastName}
                                                 </MenuItem>
-                                            ))} */}
+                                            ))}
                                         </Select>
                                         <FormHelperText>Select users to assign to this task</FormHelperText>
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3, gap: 2 }}>
+                                <Button
+                                        variant="outlined"
+                                        startIcon={<SaveIcon />}
+                                        onClick={() => navigate(`/view-project/?projectId=${projectId}`)}
+                                        size="large"
+                                    >
+                                        Cancel
+                                    </Button>
                                     <Button
                                         variant="contained"
                                         color="primary"

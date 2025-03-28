@@ -66,7 +66,6 @@ const fetchProjectTasks = async () => {
             showMessage("error", "Error", data.message);
             return;
         }
-        console.log("Data",data);
         Swal.close();
         setTasks(data);
     })
@@ -131,7 +130,7 @@ return (
                                                 Assigned to: {task.}
                                             </Typography> */}
                                         </Box>
-                                        { task.status !== TaskStatus.Completed ? (<Box
+                                        { task.status !== "Completed" ? (<Box
                                         sx={{
                                             mt: 'auto',
                                             display: 'flex',

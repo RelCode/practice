@@ -30,7 +30,7 @@ const [id, setId] = useState<number>(0);
 const [taskName, setTaskName] = useState<string>("");
 const [taskDescription, setTaskDescription] = useState<string>("");
 const [dueDate, setDueDate] = useState<Date | null>(null);
-const [taskStatus, setTaskStatus] = useState<string>("New");
+const [taskStatus, setTaskStatus] = useState<string>("");
 const taskId = new URL(window.location.href).searchParams.get("taskId") || null;
 const projectId = new URL(window.location.href).searchParams.get("projectId") || null;
 
@@ -82,7 +82,7 @@ const fetchCurrentTaskDetails = async () => {
             setTaskName(data['title']);
             setTaskDescription(data['description']);
             setDueDate(data['dueDate'] ? new Date(data['dueDate']) : null);
-            setTaskStatus(data['status']);
+            setTaskStatus(TaskStatus[_.indexOf(TaskStatus, data['status'])]);
             Swal.close();
         })
         .catch(error => {
@@ -95,6 +95,8 @@ const fetchCurrentTaskDetails = async () => {
         showMessage("error", "Error", "An error occurred while fetching task details");
     }
 }
+
+console.log("TaskStatus", taskStatus)
 
 useEffect(() => {
     taskId && Number(taskId) !== 0 && fetchCurrentTaskDetails();
@@ -121,7 +123,6 @@ const handleSubmit = async (e: React.FormEvent) : Promise<any> => {
         showMessage("error", "Validation Error", "Invalid task status");
         return;
     }
-    console.log("Task Data", taskData);
 
     actionLoader(taskId ? "Updating task..." : "Creating task...");
 
@@ -211,7 +212,7 @@ return (
                             onChange={(e) => setTaskStatus(e.target.value)}
                         >
                             {_.map(TaskStatus, (status:string, index:number) => (
-                                <MenuItem key={status} value={index}>
+                                <MenuItem key={status} value={index} selected={taskStatus === status}>
                                     {status}
                                 </MenuItem>
                             ))}

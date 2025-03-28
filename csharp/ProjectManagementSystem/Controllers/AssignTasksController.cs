@@ -22,6 +22,18 @@ public class AssignTasksController : ControllerBase
         _userManager = userManager;
     }
 
+    [HttpGet("{taskItemId}")]
+    public async Task<IActionResult> GetUsers(int taskItemId)
+    {
+        var userId = GetUserId();
+        var task = await _context.Tasks.FindAsync(taskItemId);
+        var assignees = await _context.AssignTasks.Where(a => a.TaskItemId == taskItemId).ToListAsync();
+        var users = await _context.Users.Where(u => u.Id != userId).ToListAsync();
+        if (users == null)
+            return Unauthorized("No users were found");
+        return Ok(new { taskItem = task, userList = users, assignedUsers = assignees });
+    }
+
     [HttpPost("{assignmentAction}")]
     public async Task<IActionResult> AssignTask(string assignmentAction, [FromBody] AssignTask assignTask)
     {
@@ -49,13 +61,13 @@ public class AssignTasksController : ControllerBase
         }
     }
 
-    [HttpGet("{taskItemId}")]
-    public async Task<IActionResult> GetAssignmentHistory(int id)
-    {
-        var userId = GetUserId();
-        var assignments = await _context.AssignTasks.Where(a => a.TaskItemId == id && a.AssignerId == userId).ToListAsync();
-        return Ok(assignments);
-    }
+    //[HttpGet("{taskItemId}")]
+    //public async Task<IActionResult> GetAssignmentHistory(int id)
+    //{
+    //    var userId = GetUserId();
+    //    var assignments = await _context.AssignTasks.Where(a => a.TaskItemId == id && a.AssignerId == userId).ToListAsync();
+    //    return Ok(assignments);
+    //}
 
     private string GetUserId()
     {
