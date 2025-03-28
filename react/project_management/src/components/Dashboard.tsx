@@ -62,7 +62,6 @@ const Dashboard: React.FC = () => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log("Data||", data);
             Swal.close();
             setProjects(data.projects);
             setNumberOfTasks(data.numberOfTasks);
@@ -73,8 +72,6 @@ const Dashboard: React.FC = () => {
             showMessage("error", "Error", "An error occurred while loading projects");
         });
     },[token, refreshData]);
-
-    console.log("Projects", projects);
 
     return (
         <Box sx={{ py: 4 }}>

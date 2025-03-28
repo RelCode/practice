@@ -1,3 +1,10 @@
+export interface User {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+}
+
 export interface Project {
 	projectId: number,
 	name: string;
@@ -16,12 +23,9 @@ export interface TaskItem {
     projectId: number;
 }
 
-export const TaskStatus: Record<string, string> = {
-    "Ready": "Ready",
-    "InProgress": "In Progress",
-    "Completed": "Completed",
-    "OnHold": "On Hold"
-}
+export const TaskStatus: string[] = ["Ready", "In Progress", "Completed", "On Hold"];
+
+export const ColorCodes: string[] = ["#1976d2", "#ff9800", "#4caf50", "#f44336"];
 
 export enum TaskPriority {
     Low = "Low",
