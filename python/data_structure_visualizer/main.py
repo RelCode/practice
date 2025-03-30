@@ -40,7 +40,8 @@ def main_menu():
             utils.clear_screen()
             searching_algorithms_menu()
         elif (choice == ""):
-            sys.exit()
+            utils.clear_screen()
+            sys.exit(0)
         else:
             print("Invalid Option")
 
@@ -228,7 +229,7 @@ def binary_tree_menu():
 def sorting_algorithm_menu():
     while (True):
         utils.show_info("Sorting Algorithms")
-        arr = [64, 34, 25, 12, 22, 11, 90]
+        arr = [45, 23, 54, 77, 33, 16, 88, 2, 27]
         print("1: Bubble Sort")
         print("2: Selection Sort")
         print("3: Insertion Sort")
@@ -265,7 +266,7 @@ def sorting_algorithm_menu():
 def searching_algorithms_menu():
     while (True):
         utils.show_info("Searching Algorithms")
-        arr = [64, 34, 25, 12, 22, 11, 90]
+        arr = [45, 23, 54, 77, 33, 16, 88, 2, 27]
         print("1: Linear Search")
         print("2: Binary Search")
         print("3: Jump Search")
@@ -283,6 +284,7 @@ def searching_algorithms_menu():
                 result = linear_search(arr, value)
             elif (choice == "2"):
                 from algorithms.searching import binary_search
+                
                 result = binary_search(arr, value)
             elif (choice == "3"):
                 from algorithms.searching import jump_search
