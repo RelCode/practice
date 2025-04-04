@@ -1,0 +1,7 @@
+# Web framework
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# ML/DL libraries
+torch>=2.0.0
+transformers>=4.30.0
