@@ -12,7 +12,7 @@ tokenizer = None
 @app.on_event("startup")
 async def startup_event():
     global pipe
-    pipe = pipeline("text-generation", model="Equall/Saul-Instruct-v1", torch_dtype=torch.float16, device_map="auto")
+    pipe = pipeline("text-generation", model="", torch_dtype=torch.float16, device_map="auto")
     
 @app.get("/health")
 async def health_check():
