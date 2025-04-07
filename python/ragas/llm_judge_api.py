@@ -1,23 +1,18 @@
 from fastapi import FastAPI
-import torch
-from transformers import pipeline
+import requests
 from pydantic import BaseModel
+from datetime import datetime
+import json
 
 app = FastAPI()
-
-# load local model
-model = None
-tokenizer = None
-
-@app.on_event("startup")
-async def startup_event():
-    global pipe
-    pipe = pipeline("text-generation", model="", torch_dtype=torch.float16, device_map="auto")
     
 @app.get("/health")
 async def health_check():
-    print("Health check")
-    return {"status": "Ok", "model": model is not None}
+    try:
+        response = requests.get("http://localhost:11434/api/tags")
+        return {"status": "ok", "ollama_available": True, "response": response.json()}
+    except:
+        return {"status": "error", "message": "Ollama not running"}
 
 class QueryRequest(BaseModel):
     query: str
@@ -25,44 +20,81 @@ class QueryRequest(BaseModel):
 
 @app.post("/judge")
 async def judge_response(request: QueryRequest):
-    print("Judge response")
     query = request.query
-    response = request.response
-    print(f"Query: {query}")
-    if not query or not response:
-        return {"error": "Query and response must be provided."}
+    response_text = request.response
+    current_date = datetime.now().strftime("%B %d, %Y")
     
-    print(f"Response: {response}")
+    print(f"Received query: {query}, Received response: {response_text}, current timestamp: {current_date}")
     
-    prompt = f"""
-    You are an expert evaluator. Assess the quality of the following response to the provided question:
+    # Enhanced system prompt with current date
+    system_prompt = f"""You are an expert legal and tax law evaluator with the following responsibilities:
+
+    1. Today's date is {current_date}. All evaluations must account for this date when assessing temporal relevance.
+    2. You must identify any legal or tax information that appears outdated relative to current laws.
+    3. Your evaluations must follow strict legal reasoning principles with minimal personal interpretation.
+    4. Every rating must be justified with specific reasoning.
+    5. Your response must be valid, properly formatted JSON only, with no preamble or additional text.
+    6. You must distinguish between factual errors and potential interpretation differences.
+
+    Evaluation criteria:
+    - Relevance (0-10): How directly the response addresses the question
+    - Accuracy (0-10): Factual correctness and legal soundness  
+    - Completeness (0-10): Coverage of necessary details and considerations
+    - Temporal_validity (0-10): Whether the information reflects current laws
+    """
+    
+    prompt = f"""Evaluate the quality of this legal/tax response:
     
     Question: {query}
-    Response: {response}
-    
-    Rate the response on:
-    1. Relevance (0-10)
-    2. Accuracy (0-10)
-    3. Completeness (0-10)
-    
-    Provide your rating and a brief explanation for each rating in a JSON format:
+    Response: {response_text}
+
+    Provide ratings and explanation in JSON format as shown below:
     {{
         "relevance": 0,
         "accuracy": 0,
         "completeness": 0,
-        "explanation": ""
+        "temporal_validity": 0,
+        "overall_score": 0,
+        "explanation": "",
+        "potential_issues": [],
+        "missing_considerations": []
     }}
     """
     
-    print(prompt)
-    
-    # inputs = tokenizer(prompt, return_tensors="pt")
-    # outputs = model.generate(**inputs, max_length=1024)
-    # generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    messages = [
-        {"role": "user", "content": prompt}
-    ]
-    userPrompt = pipe.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    outputs = pipe(prompt, max_new_tokens=256, do_sample=False)
-    
-    return {"judge": outputs[0]['generated_text']}
+    try:
+        # Use stream=False to get a complete response instead of streaming
+        ollama_response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "deepseek-llm:7b-chat",
+                "prompt": prompt,
+                "system": system_prompt,
+                "temperature": 0.1,
+                "stream": False  # This is the key change
+            }
+        )
+        
+        # Check if response is valid and has status code 200
+        if ollama_response.status_code != 200:
+            return {"error": f"Ollama API returned error code: {ollama_response.status_code}"}
+        
+        # Process the response
+        try:
+            ollama_json = ollama_response.json()
+            llm_response = ollama_json.get("response", "")
+            
+            # Try to parse the LLM's response as JSON
+            try:
+                parsed_json = json.loads(llm_response)
+                return {"judge": parsed_json}
+            except json.JSONDecodeError:
+                return {
+                    "judge": llm_response,
+                    "warning": "LLM returned malformed JSON",
+                    "raw_json_error": "Could not parse LLM output as JSON"
+                }
+        except Exception as e:
+            return {"error": f"Failed to process response: {str(e)}"}
+            
+    except Exception as e:
+        return {"error": f"Request failed: {str(e)}"}
