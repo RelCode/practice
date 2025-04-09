@@ -7,6 +7,7 @@ import re
 import time
 import subprocess
 import atexit
+import os
 
 class LlmJudge:
     def __init__(self):
@@ -34,8 +35,6 @@ class LlmJudge:
             for query, answer in self.rag_answers.items():
                 if answer['status'] == 'success':
                     executor.submit(self.process_judge_query, query, answer['message'])
-            # for key, query in enumerate(self.rag_answers):
-            #     executor.submit(self.process_query, key, query)
                 
     def process_query(self, key, query):
         MAX_RETRIES = 3
@@ -158,61 +157,8 @@ class LlmJudge:
                 return
             
             print(f"Response for query {query}: {response.text}")
-                
-            # data_objects = []
             
-            # # Split the response text by "data:" and process each part
-            # parts = response.text.split("data:")
-            # for part in parts:
-            #     part = part.strip()
-            #     if not part:
-            #         continue
-                    
-            #     # Skip parts that don't look like JSON
-            #     if not (part.startswith('{') or part.startswith('[')):
-            #         continue
-                    
-            #     try:
-            #         # Parse JSON object from the part
-            #         obj = json.loads(part)
-            #         data_objects.append(obj)
-            #     except json.JSONDecodeError as e:
-            #         # Log problematic content for debugging
-            #         preview = part[:50] + '...' if len(part) > 50 else part
-            #         print(f"Failed to parse JSON from part for query {key}: {e}")
-            #         print(f"Content preview: {preview}")
-
-            #         # Optional: Try to fix common JSON issues
-            #         try:
-            #             # Sometimes SSE responses have extra text before/after JSON
-            #             # Try to extract just the JSON portion with regex
-            #             import re
-            #             json_match = re.search(r'(\{.*\}|\[.*\])', part, re.DOTALL)
-            #             if json_match:
-            #                 fixed_json = json_match.group(0)
-            #                 obj = json.loads(fixed_json)
-            #                 data_objects.append(obj)
-            #                 print(f"Successfully extracted valid JSON after initial failure")
-            #         except:
-            #             pass  # If this also fails, just skip this part
-            
-            # final_answer = data_objects[-1] if data_objects else None
-            # if not final_answer:
-            #     print(f"No valid data objects found for query {key}")
-            #     return
-                
-            # message = None
-            # try:
-            #     message = final_answer["content"]["message"]
-            # except (KeyError, TypeError):
-            #     print(f"Response missing expected structure for query {key}")
-            
-            
-            # with self.lock:
-            #     self.rag_answers[query] = {
-            #         'status': 'success', # track status in results
-            #         'message': message
-            #     }
+            self.llm_answers[query] = response.text
             
         except Exception as e:
             print(f"Unexpected error processing query {query}: {e}")
@@ -301,10 +247,14 @@ class LlmJudge:
     
 if __name__ == "__main__":
     judge = LlmJudge()
-    # if judge.run_server_in_thread():
-    queries = judge.get_queries("queries")
-    judge.run_rag(queries)
-    judge.run_judge()
-    print("RAG responses:", judge.llm_answers)
-    # else:
-    #     print("Failed to start LLM Judge server.")
+    if judge.run_server_in_thread():
+        queries = judge.get_queries("queries")
+        judge.run_rag(queries)
+        judge.run_judge()
+        os.system('cls' if os.name == 'nt' else 'clear')
+        for query, judge_answer in judge.llm_answers.items():
+            print(f"Query: {query}")
+            print(f"Judge Answer: {judge_answer}")
+            print("-" * 40)
+    else:
+        print("Failed to start LLM Judge server.")
