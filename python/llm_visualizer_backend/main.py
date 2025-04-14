@@ -48,9 +48,6 @@ async def embeddings(tokens: EmbeddingsRequest):
             embeddings = model(input_ids)
             embeddedVectors.append({ "token": token, "vectors": embeddings[0].tolist() })
     return { "embeddings": embeddedVectors }
-
-@app.post("/visualize-embeddings/")
-async def visualize_embeddings(request: VisualizeRequest):
     model = BertModel.from_pretrained("bert-base-uncased")
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
     
