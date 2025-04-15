@@ -7,6 +7,7 @@ import {
     Button,
     Box,
 } from '@mui/material';
+import path from 'path';
 
 const NavBar: React.FC = () => {
     const navigate = useNavigate();
@@ -16,6 +17,7 @@ const NavBar: React.FC = () => {
         { label: 'Tokenization', path: '/tokenization' },
         { label: 'Embeddings', path: '/embeddings' },
         { label: 'Attention', path: '/attention' },
+        { label: 'Feed-Forward Network', path: '/feedforward' },
         { label: 'Transformer', path: '/transformer' },
         { label: 'Generation', path: '/generation' },
     ];
