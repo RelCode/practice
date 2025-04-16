@@ -22,13 +22,13 @@ Divider
 } from '@mui/material';
 
 interface FFNData {
-tokens: string[];
-// Intermediate activations in the hidden layer
-intermediate: number[][][]; // [layer][token][neuron]
-// After GELU activation
-activations: number[][][]; // [layer][token][neuron]
-// Final output after the second linear transformation
-output: number[][][]; // [layer][token][dim]
+    tokens: string[];
+    // Intermediate activations in the hidden layer
+    intermediate: number[][][]; // [layer][token][neuron]
+    // After GELU activation
+    activations: number[][][]; // [layer][token][neuron]
+    // Final output after the second linear transformation
+    output: number[][][]; // [layer][token][dim]
 }
 
 const FeedForwardNetwork: React.FC = () => {
