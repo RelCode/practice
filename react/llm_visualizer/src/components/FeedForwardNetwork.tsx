@@ -2,23 +2,23 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 import {
-Box,
-Container,
-Typography,
-Paper,
-TextField,
-Button,
-CircularProgress,
-Tabs,
-Tab,
-Slider,
-FormControl,
-InputLabel,
-Select,
-MenuItem,
-Grid,
-Tooltip,
-Divider
+    Box,
+    Container,
+    Typography,
+    Paper,
+    TextField,
+    Button,
+    CircularProgress,
+    Tabs,
+    Tab,
+    Slider,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Grid,
+    Tooltip,
+    Divider
 } from '@mui/material';
 
 interface FFNData {
