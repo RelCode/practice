@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import torch
 import torch.nn.functional as F
-from transformers import BertTokenizer, BertModel, BertForMaskedLM
+from transformers import BertTokenizer, BertModel, GPT2LMHeadModel, GPT2Tokenizer
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from pprint import pprint
@@ -88,42 +88,38 @@ class TokenPredictionRequest(BaseModel):
 
 @app.post("/token-predictions")
 async def token_predictions(request: TokenPredictionRequest):
-    # Load model and tokenizer
-    tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-    model = BertForMaskedLM.from_pretrained("bert-base-uncased")
-        
-    # Prepare input with mask token for next token prediction
-    masked_text = request.text.strip() + " " + tokenizer.mask_token
-        
-    # Tokenize the input
-    inputs = tokenizer(masked_text, return_tensors="pt")
-        
-    # Find the position of the [MASK] token
-    mask_token_index = torch.where(inputs["input_ids"] == tokenizer.mask_token_id)[1]
-        
-    # Forward pass
+    print(f"Received text for token prediction: {request.text}")
+    # Load GPT-2 model and tokenizer
+    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    model = GPT2LMHeadModel.from_pretrained("gpt2")
+    
+    # Add padding token if needed
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    
+    # Encode input text
+    inputs = tokenizer(request.text.strip(), return_tensors="pt")
+    
+    # Get next token prediction
     with torch.no_grad():
         outputs = model(**inputs)
-        logits = outputs.logits
-        
-    # Get predictions for the mask token
-    mask_logits = logits[0, mask_token_index, :].squeeze()
-        
-    # Get the top predicted tokens
-    topk_values, topk_indices = torch.topk(mask_logits, k=10)
-        
-    # Convert to probabilities using softmax
+        next_token_logits = outputs.logits[0, -1, :]
+    
+    # Get top k tokens
+    topk_values, topk_indices = torch.topk(next_token_logits, k=10)
+    
+    # Apply softmax for probabilities
     probabilities = F.softmax(topk_values, dim=0).tolist()
-        
-    # Get the corresponding tokens
+    
+    # Get the corresponding tokens (clean up whitespace for display)
     topk_tokens = [tokenizer.decode([idx.item()]).strip() for idx in topk_indices]
-        
-    # Prepare the response
+    
+    # Prepare response
     top_tokens = [
-        {"token": token, "probability": float(prob)} 
+        {"token": token if token else "[space]", "probability": float(prob)} 
         for token, prob in zip(topk_tokens, probabilities)
     ]
-        
+    
     return {
         "topTokens": top_tokens,
         "selectedToken": top_tokens[0]["token"] if top_tokens else ""
