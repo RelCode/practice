@@ -18,9 +18,8 @@ const NavBar: React.FC = () => {
         { label: 'Embeddings', path: '/embeddings' },
         { label: 'Attention', path: '/attention' },
         { label: 'Feed-Forward Network', path: '/feedforward' },
-        // { label: 'Transformer', path: '/transformer' },
-        // { label: 'Generation', path: '/generation' },
-        { label: 'Token Prediction', path: '/token-prediction' }
+        { label: 'Token Prediction', path: '/token-prediction' },
+        { label: 'Generation', path: '/generation' }
     ];
 
     return (

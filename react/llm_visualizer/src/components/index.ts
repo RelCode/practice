@@ -5,6 +5,7 @@ import Embeddings from "./Embeddings";
 import AttentionView from "./AttentionView";
 import FeedForwardNetwork from "./FeedForwardNetwork";
 import TokenPrediction from "./TokenPrediction";
+import Generation from "./Generation";
 
 
-export { NavBar, Home, Tokenization, Embeddings, AttentionView, FeedForwardNetwork, TokenPrediction };
+export { NavBar, Home, Tokenization, Embeddings, AttentionView, FeedForwardNetwork, TokenPrediction, Generation };

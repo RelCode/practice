@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { NavBar, Home, Tokenization, Embeddings, AttentionView, FeedForwardNetwork, TokenPrediction } from './components';
+import { NavBar, Home, Tokenization, Embeddings, AttentionView, FeedForwardNetwork, TokenPrediction, Generation } from './components';
 
 const App: React.FC = () => {
 	return (
@@ -14,6 +14,7 @@ const App: React.FC = () => {
 					<Route path="/attention" element={<AttentionView />} />
 					<Route path="feedforward" element={<FeedForwardNetwork />} />
 					<Route path="/token-prediction" element={<TokenPrediction />} />
+					<Route path="/generation" element={<Generation />} />
 				</Routes>
 			</Router>
 		</div>
