@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     AppBar,
@@ -7,10 +7,16 @@ import {
     Button,
     Box,
 } from '@mui/material';
-import path from 'path';
 
 const NavBar: React.FC = () => {
+    const [ changePath, setChangePath ] = React.useState<string>('');
+    const [ selectedPath, setSelectedPath ] = React.useState<string>('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const path = window.location.pathname.split('/')[1];
+        setSelectedPath(path === '' ? '/' : `/${path}`);
+    },[changePath]);
 
     const navItems = [
         { label: 'Home', path: '/' },
@@ -33,7 +39,15 @@ const NavBar: React.FC = () => {
                         <Button
                             key={item.label}
                             color="inherit"
-                            onClick={() => navigate(item.path)}
+                            onClick={() => {
+                                setChangePath(item.path);
+                                navigate(item.path);
+                            }}
+                            style={{
+                                backgroundColor: (selectedPath === '' ? '/' : selectedPath) === item.path ? 'rgba(255, 255, 255, 0.4)' : 'transparent',
+                                color: '#fff',
+                                borderRadius: '4px'
+                            }}
                         >
                             {item.label}
                         </Button>
