@@ -8,6 +8,7 @@ import time
 import subprocess
 import atexit
 import os
+import pandas as pd
 
 class LlmJudge:
     def __init__(self):
@@ -15,6 +16,12 @@ class LlmJudge:
         self.lock = threading.Lock()
         self.rag_answers = {}
         self.llm_answers = {}
+        self.limit = 10
+        self.file_one = {}
+        self.file_two = {}
+        self.read_from_files = {}
+        self.answers_to_compare = []
+        self.evaluator_response = []
         
     def get_queries(self, filename):
         queries = []
@@ -24,6 +31,62 @@ class LlmJudge:
                 query = row.get('Query')
                 queries.append(query)
         return queries
+    
+    def get_limit(self):
+        while True:
+            try:
+                limit = input(f"Enter the limit for the number of queries to process [Default ALL]: ")
+                if limit == "":
+                    self.limit = 0
+                    break
+                if limit <= 0:
+                    print("Please enter a positive integer.")
+                    continue
+                else:
+                    self.limit = int(limit)
+                    break
+            except ValueError:
+                print("Invalid input. Please enter a positive integer.")
+    
+    def read_excel_files(self):
+        print("Reading Excel files...")
+        idx = 0
+        for filename in os.listdir("data/answer_quality"):
+            with self.lock:
+                df = pd.read_excel(f"data/answer_quality/{filename}")
+                for index, row in df.iterrows():
+                    query = row.get('Query')
+                    answer = row.get('Answers')
+                    if idx == 0:
+                        self.file_one[query] = answer
+                        if len(self.file_one) >= self.limit:
+                            idx = 1
+                            break
+                    elif idx == 1:
+                        self.file_two[query] = answer
+                        if len(self.file_two) >= self.limit:
+                            break
+            if len(self.file_one) >= self.limit and len(self.file_two) >= self.limit:
+                break
+        print(f"Length of file one: {len(self.file_one)}")
+        for query, answer in self.file_one.items():
+            print(f"Query: {query}")
+            if query in self.file_two.keys():
+                print("Appending")
+                self.answers_to_compare.append(f"""
+                        Question: {query}
+                        
+                        Answer 1: {answer}
+                        
+                        Answer 2: {self.file_two[query]}
+                    """)
+        
+    def run_evaluator(self):
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            for key, statement in enumerate(self.answers_to_compare):
+                executor.submit(self.compare_answers, key, statement)
+            
+    
     
     def run_rag(self, queries):
         with ThreadPoolExecutor(max_workers=1) as executor:
@@ -162,6 +225,59 @@ class LlmJudge:
             
         except Exception as e:
             print(f"Unexpected error processing query {query}: {e}")
+            
+    def compare_answers(self, query, statement):
+        MAX_RETRIES = 3
+        INITIAL_RETRY_DELAY = 2  # seconds
+        
+        try:
+            body = json.dumps({
+                "statement": statement
+            })
+            print(f"Sending judge request for query {query} with body: {body}")
+            url = "http://localhost:8008/evaluator"
+            headers = {'Content-Type': 'application/json'}
+            
+            retries = 0
+            while retries <= MAX_RETRIES:
+                try:
+                    response = requests.request("POST", url, headers=headers, data=body, timeout=300)
+                    response.raise_for_status()
+                    break  # exit loop if request is successful
+                except (requests.exceptions.RequestException, requests.exceptions.Timeout) as e:
+                    retries += 1
+                    if retries > MAX_RETRIES:
+                        print(f"Request failed for query {query} after {MAX_RETRIES} retries: {e}")
+                        return  # exit when all retries are exhausted
+                    
+                    retry_delay = INITIAL_RETRY_DELAY * (2 ** (retries - 1))
+                    print(f"Request attempt {retries} failed for query {query}: {e}. Retrying in {retry_delay} seconds...")
+                    time.sleep(retry_delay)
+                
+            if not response.text:
+                print(f"Empty response for query {query}")
+                return
+            
+            self.evaluator_response.append(json.loads(response.text))
+            
+        except Exception as e:
+            print(f"Unexpected error processing query {query}: {e}")
+            
+    def generate_text_file(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        filename = f"data/answer_quality/answers_{timestamp}.txt"
+        with open("data/answer_quality/answers.txt", "w") as file:
+            for index, evaluation in enumerate(self.evaluator_response):
+                try:
+                    with open(filename, "a") as file:
+                        file.write(f"{index}:: {evaluation.get('evaluation')}\n")
+                        file.write("=" * 65 + "\n\n")
+                except json.JSONDecodeError as e:
+                    print(f"Failed to decode JSON for evaluation: {evaluation}. Error: {e}")
+                
+        print("Text file generated successfully.")
+        user_input = input("Press Enter to continue...")
     
     
     @staticmethod       
@@ -245,16 +361,22 @@ class LlmJudge:
             print(f"Request failed: {e}")
             return None
     
+# queries = judge.get_queries("queries")
+        # judge.run_rag(queries)
+        # judge.run_judge()
+        # os.system('cls' if os.name == 'nt' else 'clear')
+        # for query, judge_answer in judge.llm_answers.items():
+        #     print(f"Query: {query}")
+        #     print(f"Judge Answer: {judge_answer}")
+        #     print("-" * 40)    
+    
 if __name__ == "__main__":
     judge = LlmJudge()
     if judge.run_server_in_thread():
-        queries = judge.get_queries("queries")
-        judge.run_rag(queries)
-        judge.run_judge()
-        os.system('cls' if os.name == 'nt' else 'clear')
-        for query, judge_answer in judge.llm_answers.items():
-            print(f"Query: {query}")
-            print(f"Judge Answer: {judge_answer}")
-            print("-" * 40)
+        judge.read_excel_files()
+        # judge.get_limit()
+        judge.run_evaluator()
+        judge.generate_text_file()
+        
     else:
         print("Failed to start LLM Judge server.")
