@@ -9,6 +9,8 @@ import subprocess
 import atexit
 import os
 import pandas as pd
+from docx.api import Document
+from docx.shared import Pt
 
 class LlmJudge:
     def __init__(self):
@@ -16,7 +18,7 @@ class LlmJudge:
         self.lock = threading.Lock()
         self.rag_answers = {}
         self.llm_answers = {}
-        self.limit = 10
+        self.limit = 40
         self.file_one = {}
         self.file_two = {}
         self.read_from_files = {}
@@ -52,6 +54,8 @@ class LlmJudge:
         print("Reading Excel files...")
         idx = 0
         for filename in os.listdir("data/answer_quality"):
+            if not filename.endswith(".xlsx"):
+                continue
             with self.lock:
                 df = pd.read_excel(f"data/answer_quality/{filename}")
                 for index, row in df.iterrows():
@@ -263,22 +267,55 @@ class LlmJudge:
         except Exception as e:
             print(f"Unexpected error processing query {query}: {e}")
             
+    def generate_docx_file(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        # Create a new Document
+        document = Document()
+        
+        # Set the font for the entire document
+        style = document.styles['Normal']
+        font = style.font
+        font.name = 'Calibri'
+        font.size = Pt(11)
+        
+        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        filename = f"data/answer_quality/evaluated_answers_{timestamp}.docx"
+        
+        print("Generating DOCX file...")
+        print(filename)
+        
+        for index, evaluation in enumerate(self.evaluator_response):
+            try:
+                print(evaluation)
+                # Add the evaluation header
+                document.add_paragraph(f"{index + 1}:: {evaluation.get('evaluation')}")
+                
+                # Add separator
+                separator = document.add_paragraph("=" * 65)
+                separator.add_run().add_break()  # Add extra line break
+                
+            except json.JSONDecodeError as e:
+                print(f"Failed to decode JSON for evaluation: {evaluation}. Error: {e}")
+        
+        # Save the document
+        document.save(filename)
+        print("DOCX file generated successfully.")
+        user_input = input("Press Enter to continue...")
+            
     def generate_text_file(self):
         os.system('cls' if os.name == 'nt' else 'clear')
         timestamp = time.strftime("%Y%m%d-%H%M%S")
         filename = f"data/answer_quality/answers_{timestamp}.txt"
-        with open("data/answer_quality/answers.txt", "w") as file:
-            for index, evaluation in enumerate(self.evaluator_response):
-                try:
-                    with open(filename, "a") as file:
-                        file.write(f"{index}:: {evaluation.get('evaluation')}\n")
-                        file.write("=" * 65 + "\n\n")
-                except json.JSONDecodeError as e:
-                    print(f"Failed to decode JSON for evaluation: {evaluation}. Error: {e}")
+        for index, evaluation in enumerate(self.evaluator_response):
+            try:
+                with open(filename, "a") as file:
+                    file.write(f"{index + 1}:: {evaluation.get('evaluation')}\n")
+                    file.write("=" * 65 + "\n\n")
+            except json.JSONDecodeError as e:
+                print(f"Failed to decode JSON for evaluation: {evaluation}. Error: {e}")
                 
         print("Text file generated successfully.")
         user_input = input("Press Enter to continue...")
-    
     
     @staticmethod       
     def start_fastapi_server():
@@ -329,38 +366,6 @@ class LlmJudge:
         })
         return payload
     
-    @staticmethod
-    def send_rag_request(body):
-        try:
-            response = requests.post(
-                'http://localhost:8080/predict',
-                headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
-                json=body
-            )
-            response.raise_for_status()  # Raise an error for bad responses
-            return response.text
-        except requests.exceptions.RequestException as e:
-            print(f"Request failed: {e}")
-            return None
-        
-    @staticmethod
-    def send_judge_request(query, response):
-        payload = json.dumps({
-            "query": query,
-            "response": response
-        })
-        try:
-            response = requests.post(
-                'http://localhost:8008/judge',
-                headers={'Content-Type': 'application/json', 'Accept': 'application/json'},
-                data=payload
-            )
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Request failed: {e}")
-            return None
-    
 # queries = judge.get_queries("queries")
         # judge.run_rag(queries)
         # judge.run_judge()
@@ -374,9 +379,8 @@ if __name__ == "__main__":
     judge = LlmJudge()
     if judge.run_server_in_thread():
         judge.read_excel_files()
-        # judge.get_limit()
         judge.run_evaluator()
-        judge.generate_text_file()
+        judge.generate_docx_file()
         
     else:
         print("Failed to start LLM Judge server.")
