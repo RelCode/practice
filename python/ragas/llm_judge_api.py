@@ -4,21 +4,8 @@ import requests
 from pydantic import BaseModel
 from datetime import datetime
 import json
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
 
 app = FastAPI()
-
-# Define the model name
-model_name = "mosaicml/legal-llama"
-        
-# Load the model and tokenizer (with caching)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(
-    model_name, 
-    torch_dtype=torch.float16,
-    device_map="auto"
-)
 
 # Allow all origins
 app.add_middleware(
@@ -150,7 +137,6 @@ async def evaluator_response(request: EvaluatorRequest):
                 Question: [The question you received]
 
                 Evaluation:
-                - Question: [The question you received]
                 - Answer 1: [Detailed explanation of strengths, weaknesses, hallucinations, legal correctness, etc.]
                 - Answer 2: [Detailed explanation of strengths, weaknesses, hallucinations, legal correctness, etc.]
 
@@ -174,36 +160,39 @@ async def evaluator_response(request: EvaluatorRequest):
     """
     
     try:
-        
-        # Format the input for the model
-        input_text = f"<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{prompt} [/INST]"
-        
-        # Tokenize the input
-        inputs = tokenizer(input_text, return_tensors="pt").to(model.device)
-        
-        # Generate the response
-        with torch.no_grad():
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=1024,
-                temperature=0.1,
-                do_sample=True
-            )
-        
-        # Decode the response
-        llm_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        llm_response = llm_response.replace(input_text, "").strip()
-        
-        # Try to parse the LLM's response as JSON
-        try:
-            parsed_json = json.loads(llm_response)
-            return {"evaluation": parsed_json}
-        except json.JSONDecodeError:
-            return {
-                "evaluation": llm_response,
-                "warning": "LLM returned malformed JSON",
-                "raw_json_error": "Could not parse LLM output as JSON"
+        # Use stream=False to get a complete response instead of streaming
+        ollama_response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "deepseek-llm:7b-chat",
+                "prompt": prompt,
+                "system": system_prompt,
+                "temperature": 0.1,
+                "stream": False  # This is the key change
             }
+        )
+        
+        # Check if response is valid and has status code 200
+        if ollama_response.status_code != 200:
+            return {"error": f"Ollama API returned error code: {ollama_response.status_code}"}
+        
+        # Process the response
+        try:
+            ollama_json = ollama_response.json()
+            llm_response = ollama_json.get("response", "")
+            
+            # Try to parse the LLM's response as JSON
+            try:
+                parsed_json = json.loads(llm_response)
+                return {"evaluation": parsed_json}
+            except json.JSONDecodeError:
+                return {
+                    "evaluation": llm_response,
+                    "warning": "LLM returned malformed JSON",
+                    "raw_json_error": "Could not parse LLM output as JSON"
+                }
+        except Exception as e:
+            return {"error": f"Failed to process response: {str(e)}"}
             
     except Exception as e:
         return {"error": f"Request failed: {str(e)}"}
